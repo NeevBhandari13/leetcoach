@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.venv/
+
+# VSCode or JetBrains configs
+.vscode/
+
+# Mac/Linux
+.DS_Store
