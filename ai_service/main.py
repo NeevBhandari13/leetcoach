@@ -60,5 +60,7 @@ def start_interview():
 
     return {"session_id": session_id, "chat": sessions[session_id]}
 
+@app.post("/chat")
+def chat(instructions: str, input: list[dict]):
+    pass
 
- 
