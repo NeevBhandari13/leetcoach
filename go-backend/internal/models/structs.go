@@ -10,7 +10,7 @@ type Message struct {
 }
 
 type Session struct {
-	ID          string
+	SessionID   string
 	State       interview.State
 	ChatHistory []Message
 	ProblemText string
