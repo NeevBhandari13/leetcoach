@@ -6,14 +6,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/neevbhandari13/leetcoach/internal/interview"
-	"github.com/neevbhandari13/leetcoach/internal/models"
+	"github.com/neevbhandari13/leetcoach/pkg/problems"
 )
 
 var (
-	// list of strings of problem texts
-	problemTexts []string = []string{"Problem text 1", "Problem text 2", "Problem text 3"}
 	// map to store sessions
-	sessions = make(map[string]*models.Session)
+	sessions = make(map[string]*interview.Session)
 	// mutex for sessions map
 	sessionsMutex sync.Mutex
 )
@@ -24,16 +22,16 @@ func generateSessionID() string {
 }
 
 func getProblemText() string {
-	randomIndex := rand.Intn(len(problemTexts))
-	var problemText string = problemTexts[randomIndex]
+	randomIndex := rand.Intn(len(problems.ProblemTexts))
+	var problemText string = problems.problemTexts[randomIndex]
 	return problemText
 }
 
-func CreateSession() *models.Session {
-	session := &models.Session{
+func CreateSession() *interview.Session {
+	session := &interview.Session{
 		SessionID:   generateSessionID(), // helper function
 		State:       interview.IntroState,
-		ChatHistory: []models.Message{},
+		ChatHistory: []interview.Message{},
 		ProblemText: getProblemText(),
 	}
 

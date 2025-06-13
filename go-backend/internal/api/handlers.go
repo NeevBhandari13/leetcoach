@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/neevbhandari13/leetcoach/internal/sessions"
 	"net/http"
 )
 
@@ -18,5 +19,12 @@ func testHandler(c *gin.Context) {
 }
 
 func startInterviewHandler(c *gin.Context) {
+	session := sessions.CreateSession()
 
+	c.JSON(http.StatusOK, gin.H{
+		"session_id": session.SessionID,
+		"problem":    session.ProblemText,
+		"state":      session.State,
+		"chat":       session.ChatHistory,
+	})
 }
