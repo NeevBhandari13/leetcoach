@@ -7,10 +7,10 @@ import (
 
 // gets instructions, developer prompt and chat history and packages into a GPTRequest
 func PackageGPTRequest(instructions string, developerPrompt string, chatHistory []models.Message) models.GPTRequest {
-	chatHistory = append(chatHistory, interview.PackageMessage("developer", developerPrompt))
+	Input := append(chatHistory, interview.PackageMessage("developer", developerPrompt))
 	return models.GPTRequest{
 		Instructions: instructions,
-		ChatHistory:  chatHistory,
+		Input:        Input,
 	}
 
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/neevbhandari13/leetcoach/internal/ai"
 	"github.com/neevbhandari13/leetcoach/internal/interview"
-	"github.com/neevbhandari13/leetcoach/internal/sessions"
+	"github.com/neevbhandari13/leetcoach/internal/prompts"
 	"net/http"
 )
 
@@ -21,11 +21,11 @@ func testHandler(c *gin.Context) {
 }
 
 func startInterviewHandler(c *gin.Context) {
-	session := sessions.CreateSession()
+	session := interview.CreateSession()
 
-	instructions := interview.GetInstructions()
-	developerPrompt := interview.GetDeveloperPrompt(session.State)
-	chatHistory := sessions.GetChatHistory(session.SessionID)
+	instructions := prompts.GetInstructions()
+	developerPrompt := prompts.GetDeveloperPrompt(session.State)
+	chatHistory := interview.GetChatHistory(session.SessionID)
 
 	gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
 
@@ -39,7 +39,7 @@ func startInterviewHandler(c *gin.Context) {
 		return
 	}
 
-	sessions.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", response))
+	interview.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", response))
 
 	c.JSON(http.StatusOK, gin.H{
 		"session_id": session.SessionID,

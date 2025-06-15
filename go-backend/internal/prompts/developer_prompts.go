@@ -1,4 +1,4 @@
-package interview
+package prompts
 
 import (
 	"github.com/neevbhandari13/leetcoach/internal/models"

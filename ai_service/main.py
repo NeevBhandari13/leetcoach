@@ -1,6 +1,7 @@
 from collections import defaultdict
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from models.schemas import GPTRequest
 from llm.llm_client import chat_with_gpt
 from uuid import uuid4
 
@@ -61,7 +62,9 @@ def test_gpt():
 #     return {"session_id": session_id, "chat": sessions[session_id]}
 
 @app.post("/chat")
-def chat(instructions: str, input: list[dict]):
+def chat(request: GPTRequest):
+    instructions = request.instructions
+    input = request.input
     response = chat_with_gpt(instructions, input)
     # JSONResponse creates JSON-encoded response with 200 status code and Content-Type: application/json header
     return JSONResponse(content={"response": response.output_text})

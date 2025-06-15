@@ -7,7 +7,7 @@ class Message(BaseModel):
 
 class GPTRequest(BaseModel):
     instructions: str
-    messages: List[Message]
+    input: List[Message]
 
 class GPTResponse(BaseModel):
     output_text: str
