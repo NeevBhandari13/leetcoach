@@ -1,4 +1,4 @@
-package interview
+package models
 
 type State int
 

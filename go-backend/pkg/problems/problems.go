@@ -1,5 +1,7 @@
 package problems
 
+import "math/rand"
+
 type Problem struct {
 	ID         int    `json:"id"`
 	Title      string `json:"title"`
@@ -7,7 +9,7 @@ type Problem struct {
 	Difficulty string `json:"difficulty"`
 }
 
-var problemTexts []Problem
+var ProblemList []Problem
 
 var twoSum = Problem{
 	ID:         1,
@@ -25,5 +27,12 @@ var addTwoNumbers = Problem{
 
 // init function runs as soon as package is loaded up
 func init() {
-	problemTexts = append(problemTexts, twoSum, addTwoNumbers)
+	ProblemList = append(ProblemList, twoSum, addTwoNumbers)
+}
+
+// function to get a random problem
+func GetProblemText() string {
+	randomIndex := rand.Intn(len(ProblemList))
+	var problemText string = ProblemList[randomIndex].Text
+	return problemText
 }

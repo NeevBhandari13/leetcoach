@@ -1,8 +1,8 @@
 from collections import defaultdict
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from llm.llm_client import chat_with_gpt
 from uuid import uuid4
-from interview.developer_prompts import STATE_DEVELOPER_PROMPTS
 
 
 INSTRUCTIONS = """
@@ -43,24 +43,26 @@ def test_gpt():
     response = chat_with_gpt(instructions, input)
     return {"response": response.output_text}
 
-@app.get("/start-interview")
-def start_interview():
-    session_id = str(uuid4()) # initialise a uuid for new session
-    sessions[session_id] = [] # initialise a new session with empty list of messages
+# @app.get("/start-interview")
+# def start_interview():
+#     session_id = str(uuid4()) # initialise a uuid for new session
+#     sessions[session_id] = [] # initialise a new session with empty list of messages
     
-    state = "Greeting"
-    developer_prompt = STATE_DEVELOPER_PROMPTS[state]
-    instructions = INSTRUCTIONS
-    input = [{"role": "developer", "content": developer_prompt}]
+#     state = "Greeting"
+#     developer_prompt = STATE_DEVELOPER_PROMPTS[state]
+#     instructions = INSTRUCTIONS
+#     input = [{"role": "developer", "content": developer_prompt}]
 
-    response = chat_with_gpt(instructions, input)
+#     response = chat_with_gpt(instructions, input)
     
-    reply = response.output_text
-    sessions[session_id].append({"role": "assistant", "content": reply})
+#     reply = response.output_text
+#     sessions[session_id].append({"role": "assistant", "content": reply})
 
-    return {"session_id": session_id, "chat": sessions[session_id]}
+#     return {"session_id": session_id, "chat": sessions[session_id]}
 
 @app.post("/chat")
 def chat(instructions: str, input: list[dict]):
-    pass
+    response = chat_with_gpt(instructions, input)
+    # JSONResponse creates JSON-encoded response with 200 status code and Content-Type: application/json header
+    return JSONResponse(content={"response": response.output_text})
 

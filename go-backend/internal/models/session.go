@@ -1,11 +1,4 @@
-package interview
-
-import ()
-
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
+package models
 
 type Session struct {
 	SessionID   string    `json:"session_id"`
