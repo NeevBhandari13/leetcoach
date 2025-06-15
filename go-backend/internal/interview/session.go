@@ -1,6 +1,7 @@
 package interview
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/google/uuid"
@@ -33,4 +34,37 @@ func CreateSession() *models.Session {
 	sessionsMutex.Unlock()
 
 	return session
+}
+
+func GetSession(sessionID string) (*models.Session, error) {
+	sessionsMutex.Lock()
+	defer sessionsMutex.Unlock()
+
+	session, ok := sessions[sessionID]
+	if !ok {
+		return nil, fmt.Errorf("session with ID %s not found", sessionID)
+	}
+	return session, nil
+}
+
+func GetState(sessionID string) (models.State, error) {
+	sessionsMutex.Lock()
+	defer sessionsMutex.Unlock()
+
+	session, ok := sessions[sessionID]
+	if !ok {
+		return models.NilState, fmt.Errorf("session with ID %s not found", sessionID)
+	}
+	return session.State, nil
+}
+
+func GetProblemText(sessionID string) (string, error) {
+	sessionsMutex.Lock()
+	defer sessionsMutex.Unlock()
+
+	session, ok := sessions[sessionID]
+	if !ok {
+		return "", fmt.Errorf("session with ID %s not found", sessionID)
+	}
+	return session.ProblemText, nil
 }

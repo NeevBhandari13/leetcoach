@@ -64,6 +64,6 @@ func CallGPT(gptRequest models.GPTRequest) (string, error) {
 		return "", err
 	}
 
-	return gptResponse.ResponseText, nil
+	return gptResponse.Reply, nil
 
 }

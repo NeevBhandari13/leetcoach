@@ -9,4 +9,5 @@ const (
 	InitialSolutionState
 	OptimisationState
 	WrapUpState
+	NilState
 )

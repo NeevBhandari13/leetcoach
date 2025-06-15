@@ -1,11 +1,13 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/neevbhandari13/leetcoach/internal/ai"
 	"github.com/neevbhandari13/leetcoach/internal/interview"
+	"github.com/neevbhandari13/leetcoach/internal/models"
 	"github.com/neevbhandari13/leetcoach/internal/prompts"
-	"net/http"
 )
 
 // gin.Context is the context of the HTTP request,
@@ -52,5 +54,69 @@ func startInterviewHandler(c *gin.Context) {
 }
 
 func continueInterviewHandler(c *gin.Context) {
+	// request is a variable to hold the request body
+	var request models.ContinueInterviewRequest
 
+	// BindJSON takes the request body and binds it to the request variable
+	if err := c.BindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// unpack request body
+	sessionID := request.SessionID
+	userInput := request.Input
+
+	// convert user input into a message
+	userMessage := interview.PackageMessage("user", userInput)
+
+	// append user message to chat history and retrieve it
+	chatHistory := interview.AppendAndReadChatHistory(sessionID, userMessage)
+
+	// get instructions and developer prompt
+	instructions := prompts.GetInstructions()
+	state, err := interview.GetState(sessionID)
+	// handle error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	developerPrompt := prompts.GetDeveloperPrompt(state)
+
+	// package gpt request
+	gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
+
+	response, err := ai.CallGPT(gptRequest)
+	// handle error
+	if err != nil {
+		// send back response with StatusInternalServerError code and error message in gin.H
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	interview.UpdateChatHistory(sessionID, interview.PackageMessage("assistant", response))
+
+	session, err := interview.GetSession(sessionID)
+	// handle error
+	if err != nil {
+		// send back response with StatusInternalServerError code and error message in gin.H
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"response":   response,
+		"session_id": session.SessionID,
+		"problem":    session.ProblemText,
+		"state":      session.State,
+		"chat":       session.ChatHistory,
+	})
 }

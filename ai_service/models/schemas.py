@@ -10,4 +10,5 @@ class GPTRequest(BaseModel):
     input: List[Message]
 
 class GPTResponse(BaseModel):
-    responseText: str
+    Reply: str
+    NextState: str
