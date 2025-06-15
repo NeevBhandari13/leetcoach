@@ -10,4 +10,4 @@ class GPTRequest(BaseModel):
     input: List[Message]
 
 class GPTResponse(BaseModel):
-    output_text: str
+    responseText: str

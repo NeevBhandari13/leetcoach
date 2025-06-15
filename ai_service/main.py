@@ -67,5 +67,5 @@ def chat(request: GPTRequest):
     input = request.input
     response = chat_with_gpt(instructions, input)
     # JSONResponse creates JSON-encoded response with 200 status code and Content-Type: application/json header
-    return JSONResponse(content={"response": response.output_text})
+    return JSONResponse(content={"responseText": response.output_text})
 

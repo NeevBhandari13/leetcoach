@@ -42,10 +42,15 @@ func startInterviewHandler(c *gin.Context) {
 	interview.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", response))
 
 	c.JSON(http.StatusOK, gin.H{
+		"response":   response,
 		"session_id": session.SessionID,
 		"problem":    session.ProblemText,
 		"state":      session.State,
 		"chat":       session.ChatHistory,
 	})
+
+}
+
+func continueInterviewHandler(c *gin.Context) {
 
 }

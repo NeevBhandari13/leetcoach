@@ -6,5 +6,5 @@ type GPTRequest struct {
 }
 
 type GPTResponse struct {
-	Reply string `json:"reply"`
+	ResponseText string `json:"responseText"`
 }

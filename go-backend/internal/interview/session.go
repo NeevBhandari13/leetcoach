@@ -34,18 +34,3 @@ func CreateSession() *models.Session {
 
 	return session
 }
-
-// Gets chat history from sessionID
-func GetChatHistory(sessionID string) []models.Message {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
-	return sessions[sessionID].ChatHistory
-}
-
-func UpdateChatHistory(sessionID string, message models.Message) {
-	// lock the sessions map
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
-	// get chat history from session and append the new message to it
-	sessions[sessionID].ChatHistory = append(sessions[sessionID].ChatHistory, message)
-}

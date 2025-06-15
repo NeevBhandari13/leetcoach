@@ -9,4 +9,5 @@ func SetupRoutes(router *gin.Engine) {
 	// defines a post request to the /start-interview endpoint which will call the startInterviewHandler function
 	router.GET("/test", testHandler)
 	router.POST("/start-interview", startInterviewHandler)
+	router.POST("/continue-interview", continueInterviewHandler)
 }
