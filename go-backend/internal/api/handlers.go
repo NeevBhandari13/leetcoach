@@ -31,7 +31,7 @@ func startInterviewHandler(c *gin.Context) {
 
 	gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
 
-	response, err := ai.CallGPT(gptRequest)
+	response, _, err := ai.CallGPT(gptRequest)
 	// handle error
 	if err != nil {
 		// send back response with StatusInternalServerError code and error message in gin.H
@@ -90,7 +90,7 @@ func continueInterviewHandler(c *gin.Context) {
 	// package gpt request
 	gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
 
-	response, err := ai.CallGPT(gptRequest)
+	reply, nextState, err := ai.CallGPT(gptRequest)
 	// handle error
 	if err != nil {
 		// send back response with StatusInternalServerError code and error message in gin.H
@@ -100,7 +100,11 @@ func continueInterviewHandler(c *gin.Context) {
 		return
 	}
 
-	interview.UpdateChatHistory(sessionID, interview.PackageMessage("assistant", response))
+	// add ai response to chat history
+	interview.UpdateChatHistory(sessionID, interview.PackageMessage("assistant", reply))
+
+	// set next state
+	interview.SetState(sessionID, nextState)
 
 	session, err := interview.GetSession(sessionID)
 	// handle error
@@ -113,7 +117,7 @@ func continueInterviewHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"response":   response,
+		"reply":      reply,
 		"session_id": session.SessionID,
 		"problem":    session.ProblemText,
 		"state":      session.State,

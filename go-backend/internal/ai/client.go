@@ -34,7 +34,7 @@ func init() {
 
 }
 
-func CallGPT(gptRequest models.GPTRequest) (string, error) {
+func CallGPT(gptRequest models.GPTRequest) (string, models.State, error) {
 
 	// get url for chat endpoint in python microservice
 	chatURL := fmt.Sprintf("%s/chat", PythonServiceURL)
@@ -43,7 +43,7 @@ func CallGPT(gptRequest models.GPTRequest) (string, error) {
 	// is a slice of bytes under the hood
 	bodyBytes, err := json.Marshal(gptRequest)
 	if err != nil {
-		return "", err
+		return "", models.NilState, err
 	}
 
 	// make HTTP POST request to python microservice
@@ -52,7 +52,7 @@ func CallGPT(gptRequest models.GPTRequest) (string, error) {
 	// "application/json" is the content type header
 	response, err := http.Post(chatURL, "application/json", bytes.NewBuffer(bodyBytes))
 	if err != nil {
-		return "", err
+		return "", models.NilState, err
 	}
 
 	// parse response body
@@ -61,9 +61,9 @@ func CallGPT(gptRequest models.GPTRequest) (string, error) {
 	// decode json into gptResponse
 	err = json.NewDecoder(response.Body).Decode(&gptResponse)
 	if err != nil {
-		return "", err
+		return "", models.NilState, err
 	}
 
-	return gptResponse.Reply, nil
+	return gptResponse.Reply, gptResponse.CurrentState, nil
 
 }

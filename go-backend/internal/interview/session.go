@@ -58,6 +58,18 @@ func GetState(sessionID string) (models.State, error) {
 	return session.State, nil
 }
 
+func SetState(sessionID string, state models.State) error {
+	sessionsMutex.Lock()
+	defer sessionsMutex.Unlock()
+
+	session, ok := sessions[sessionID]
+	if !ok {
+		return fmt.Errorf("session with ID %s not found", sessionID)
+	}
+	session.State = state
+	return nil
+}
+
 func GetProblemText(sessionID string) (string, error) {
 	sessionsMutex.Lock()
 	defer sessionsMutex.Unlock()
