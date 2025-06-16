@@ -7,5 +7,5 @@ type GPTRequest struct {
 
 type GPTResponse struct {
 	Reply        string `json:"reply"`
-	CurrentState State  `json:"next_state"`
+	CurrentState State  `json:"current_state"`
 }

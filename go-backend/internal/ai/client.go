@@ -12,32 +12,33 @@ import (
 	"github.com/neevbhandari13/leetcoach/internal/models"
 )
 
-// declare this as a package level variable so all the functions can access it
-// only variable declarations can be done outside a function like this
-var (
-	PythonServiceURL string
-)
+type GPTClient struct {
+	BaseURL string
+}
 
 // init runs before anything else in the package good for initialising variables etc
-func init() {
+func NewGPTClient() *GPTClient {
 	// need to specifically load in .env file
 	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Println("No .env file found or could not load .env file")
 	}
-	// using = instead of := assigns the value to the package variable
-	// rather than declaring a local variable
-	PythonServiceURL = os.Getenv("PYTHON_SERVICE_URL")
-	if PythonServiceURL == "" {
+	// get base URL to assign to gpt client
+	baseURL := os.Getenv("PYTHON_SERVICE_URL")
+	if baseURL == "" {
 		log.Fatal("PYTHON_SERVICE_URL is not set")
+	}
+
+	return &GPTClient{
+		BaseURL: baseURL,
 	}
 
 }
 
-func CallGPT(gptRequest models.GPTRequest) (string, models.State, error) {
+func (client *GPTClient) CallGPT(gptRequest models.GPTRequest) (string, models.State, error) {
 
 	// get url for chat endpoint in python microservice
-	chatURL := fmt.Sprintf("%s/chat", PythonServiceURL)
+	chatURL := fmt.Sprintf("%s/chat", client.BaseURL)
 
 	// convert gptRequest to json
 	// is a slice of bytes under the hood
@@ -62,6 +63,13 @@ func CallGPT(gptRequest models.GPTRequest) (string, models.State, error) {
 	err = json.NewDecoder(response.Body).Decode(&gptResponse)
 	if err != nil {
 		return "", models.NilState, err
+	}
+	// close response body
+	defer response.Body.Close()
+
+	// handle error when no state is sent back
+	if gptResponse.Reply == "" {
+		return "", models.NilState, fmt.Errorf("empty response from GPT")
 	}
 
 	return gptResponse.Reply, gptResponse.CurrentState, nil
