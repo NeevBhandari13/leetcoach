@@ -56,21 +56,32 @@ func (client *GPTClient) CallGPT(gptRequest models.GPTRequest) (string, models.S
 		return "", models.NilState, err
 	}
 
-	// parse response body
+	// create variables for the ai service and gpt responses
+	var aiServiceResponse models.AiServiceResponse
 	var gptResponse models.GPTResponse
 
-	// decode json into gptResponse
-	err = json.NewDecoder(response.Body).Decode(&gptResponse)
+	// decode json into AiServiceResponse
+	err = json.NewDecoder(response.Body).Decode(&aiServiceResponse)
 	if err != nil {
 		return "", models.NilState, err
 	}
+
 	// close response body
 	defer response.Body.Close()
 
-	// handle error when no state is sent back
-	if gptResponse.Reply == "" {
-		return "", models.NilState, fmt.Errorf("empty response from GPT")
+	// JSON from gpt is nested in response from python microservice
+	// decode json into GPTResponse
+	err = json.Unmarshal([]byte(aiServiceResponse.Response), &gptResponse)
+	if err != nil {
+		return "", models.NilState, err
 	}
+
+	//TODO: Handle state validation
+
+	// handle error when no state is sent back
+	// if gptResponse.Reply == "" {
+	// 	return "", models.NilState, fmt.Errorf("empty response from GPT")
+	// }
 
 	return gptResponse.Reply, gptResponse.CurrentState, nil
 

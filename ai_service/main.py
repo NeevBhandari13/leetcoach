@@ -6,17 +6,6 @@ from llm.llm_client import chat_with_gpt
 from uuid import uuid4
 
 
-INSTRUCTIONS = """
-You are an AI technical interviewer working with a candidate through a coding problem.
-
-Your tone should be calm, supportive, and professional throughout the interview. You are not here to judge, but to help the candidate reason through the problem in a collaborative way.
-
-You will progress through several stages of the interview, starting with a greeting, then presenting the problem, allowing for clarifying questions, discussing the initial solution, and guiding optimization. Avoid providing code or direct answers—focus on prompting the candidate to think critically and articulate their reasoning.
-"""
-# stores sessions in memory
-# TODO: store in database
-sessions = {}
-
 # initialises FastAPI app
 app = FastAPI()
 
@@ -67,5 +56,5 @@ def chat(request: GPTRequest):
     input = request.input
     response = chat_with_gpt(instructions, input)
     # JSONResponse creates JSON-encoded response with 200 status code and Content-Type: application/json header
-    return JSONResponse(content={"responseText": response.output_text})
+    return JSONResponse(content={"response": response.output_text})
 

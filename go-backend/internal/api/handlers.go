@@ -32,7 +32,7 @@ func startInterviewHandler(client *ai.GPTClient, sessionStore *interview.Session
 
 		gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
 
-		response, _, err := client.CallGPT(gptRequest)
+		reply, newState, err := client.CallGPT(gptRequest)
 		// handle error
 		if err != nil {
 			// send back response with StatusInternalServerError code and error message in gin.H
@@ -42,14 +42,14 @@ func startInterviewHandler(client *ai.GPTClient, sessionStore *interview.Session
 			return
 		}
 
-		sessionStore.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", response))
+		// add the llm response to chat history
+		sessionStore.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", reply))
+		// set new state if need be
+		sessionStore.SetState(session.SessionID, newState)
 
 		c.JSON(http.StatusOK, gin.H{
-			"response":   response,
 			"session_id": session.SessionID,
-			"problem":    session.ProblemText,
-			"state":      session.State,
-			"chat":       session.ChatHistory,
+			"response":   reply,
 		})
 
 	}
@@ -110,7 +110,8 @@ func continueInterviewHandler(client *ai.GPTClient, sessionStore *interview.Sess
 		// set next state
 		sessionStore.SetState(sessionID, nextState)
 
-		session, err := sessionStore.GetSession(sessionID)
+		// session, err := sessionStore.GetSession(sessionID)
+
 		// handle error
 		if err != nil {
 			// send back response with StatusInternalServerError code and error message in gin.H
@@ -121,11 +122,7 @@ func continueInterviewHandler(client *ai.GPTClient, sessionStore *interview.Sess
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"reply":      reply,
-			"session_id": session.SessionID,
-			"problem":    session.ProblemText,
-			"state":      session.State,
-			"chat":       session.ChatHistory,
+			"reply": reply,
 		})
 	}
 
