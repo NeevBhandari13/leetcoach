@@ -4,65 +4,66 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/neevbhandari13/leetcoach/internal/models"
+	"github.com/neevbhandari13/leetcoach/internal/utils"
 	"github.com/neevbhandari13/leetcoach/pkg/problems"
 )
 
-var (
+type SessionStore struct {
 	// map to store sessions
-	sessions = make(map[string]*models.Session)
+	sessions map[string]*models.Session
 	// mutex for sessions map
-	sessionsMutex sync.Mutex
-)
-
-// generateSessionID returns a new random session ID string.
-func generateSessionID() string {
-	return uuid.NewString()
+	mu sync.Mutex
 }
 
-func CreateSession() *models.Session {
+func NewSessionStore() *SessionStore {
+	return &SessionStore{
+		sessions: make(map[string]*models.Session),
+	}
+}
+
+func (s *SessionStore) CreateSession() *models.Session {
 	session := &models.Session{
-		SessionID:   generateSessionID(), // helper function
+		SessionID:   utils.GenerateSessionID(), // helper function
 		State:       models.IntroState,
 		ChatHistory: []models.Message{},
 		ProblemText: problems.GetProblemText(),
 	}
 
-	sessionsMutex.Lock()
-	sessions[session.SessionID] = session
-	sessionsMutex.Unlock()
+	s.mu.Lock()
+	s.sessions[session.SessionID] = session
+	s.mu.Unlock()
 
 	return session
 }
 
-func GetSession(sessionID string) (*models.Session, error) {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
+func (s *SessionStore) GetSession(sessionID string) (*models.Session, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	session, ok := sessions[sessionID]
+	session, ok := s.sessions[sessionID]
 	if !ok {
 		return nil, fmt.Errorf("session with ID %s not found", sessionID)
 	}
 	return session, nil
 }
 
-func GetState(sessionID string) (models.State, error) {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
+func (s *SessionStore) GetState(sessionID string) (models.State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	session, ok := sessions[sessionID]
+	session, ok := s.sessions[sessionID]
 	if !ok {
 		return models.NilState, fmt.Errorf("session with ID %s not found", sessionID)
 	}
 	return session.State, nil
 }
 
-func SetState(sessionID string, state models.State) error {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
+func (s *SessionStore) SetState(sessionID string, state models.State) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	session, ok := sessions[sessionID]
+	session, ok := s.sessions[sessionID]
 	if !ok {
 		return fmt.Errorf("session with ID %s not found", sessionID)
 	}
@@ -70,11 +71,11 @@ func SetState(sessionID string, state models.State) error {
 	return nil
 }
 
-func GetProblemText(sessionID string) (string, error) {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
+func (s *SessionStore) GetProblemText(sessionID string) (string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	session, ok := sessions[sessionID]
+	session, ok := s.sessions[sessionID]
 	if !ok {
 		return "", fmt.Errorf("session with ID %s not found", sessionID)
 	}

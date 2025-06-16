@@ -13,25 +13,25 @@ func PackageMessage(role string, content string) models.Message {
 }
 
 // Gets chat history from sessionID
-func GetChatHistory(sessionID string) []models.Message {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
-	return sessions[sessionID].ChatHistory
+func (s *SessionStore) GetChatHistory(sessionID string) []models.Message {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.sessions[sessionID].ChatHistory
 }
 
-func UpdateChatHistory(sessionID string, message models.Message) {
+func (s *SessionStore) UpdateChatHistory(sessionID string, message models.Message) {
 	// lock the sessions map
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	// get chat history from session and append the new message to it
 	// need to update directly for it to work
-	sessions[sessionID].ChatHistory = append(sessions[sessionID].ChatHistory, message)
+	s.sessions[sessionID].ChatHistory = append(s.sessions[sessionID].ChatHistory, message)
 }
 
 // useful for when we get user message and need to send to api
-func AppendAndReadChatHistory(sessionID string, message models.Message) []models.Message {
-	sessionsMutex.Lock()
-	defer sessionsMutex.Unlock()
-	sessions[sessionID].ChatHistory = append(sessions[sessionID].ChatHistory, message)
-	return sessions[sessionID].ChatHistory
+func (s *SessionStore) AppendAndReadChatHistory(sessionID string, message models.Message) []models.Message {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.sessions[sessionID].ChatHistory = append(s.sessions[sessionID].ChatHistory, message)
+	return s.sessions[sessionID].ChatHistory
 }

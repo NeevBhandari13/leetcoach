@@ -22,13 +22,13 @@ func testHandler(c *gin.Context) {
 	})
 }
 
-func startInterviewHandler(client *ai.GPTClient) gin.HandlerFunc {
+func startInterviewHandler(client *ai.GPTClient, sessionStore *interview.SessionStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session := interview.CreateSession()
+		session := sessionStore.CreateSession()
 
 		instructions := prompts.GetInstructions()
 		developerPrompt := prompts.GetDeveloperPrompt(session.State)
-		chatHistory := interview.GetChatHistory(session.SessionID)
+		chatHistory := sessionStore.GetChatHistory(session.SessionID)
 
 		gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
 
@@ -42,7 +42,7 @@ func startInterviewHandler(client *ai.GPTClient) gin.HandlerFunc {
 			return
 		}
 
-		interview.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", response))
+		sessionStore.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", response))
 
 		c.JSON(http.StatusOK, gin.H{
 			"response":   response,
@@ -56,7 +56,7 @@ func startInterviewHandler(client *ai.GPTClient) gin.HandlerFunc {
 
 }
 
-func continueInterviewHandler(client *ai.GPTClient) gin.HandlerFunc {
+func continueInterviewHandler(client *ai.GPTClient, sessionStore *interview.SessionStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// request is a variable to hold the request body
 		var request models.ContinueInterviewRequest
@@ -77,11 +77,11 @@ func continueInterviewHandler(client *ai.GPTClient) gin.HandlerFunc {
 		userMessage := interview.PackageMessage("user", userInput)
 
 		// append user message to chat history and retrieve it
-		chatHistory := interview.AppendAndReadChatHistory(sessionID, userMessage)
+		chatHistory := sessionStore.AppendAndReadChatHistory(sessionID, userMessage)
 
 		// get instructions and developer prompt
 		instructions := prompts.GetInstructions()
-		state, err := interview.GetState(sessionID)
+		state, err := sessionStore.GetState(sessionID)
 		// handle error
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -105,12 +105,12 @@ func continueInterviewHandler(client *ai.GPTClient) gin.HandlerFunc {
 		}
 
 		// add ai response to chat history
-		interview.UpdateChatHistory(sessionID, interview.PackageMessage("assistant", reply))
+		sessionStore.UpdateChatHistory(sessionID, interview.PackageMessage("assistant", reply))
 
 		// set next state
-		interview.SetState(sessionID, nextState)
+		sessionStore.SetState(sessionID, nextState)
 
-		session, err := interview.GetSession(sessionID)
+		session, err := sessionStore.GetSession(sessionID)
 		// handle error
 		if err != nil {
 			// send back response with StatusInternalServerError code and error message in gin.H
