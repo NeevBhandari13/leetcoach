@@ -47,10 +47,10 @@ func startInterviewHandler(client *ai.GPTClient, sessionStore *interview.Session
 		// set new state if need be
 		sessionStore.SetState(session.SessionID, newState)
 
-		c.JSON(http.StatusOK, gin.H{
-			"session_id": session.SessionID,
-			"response":   reply,
-		})
+		// package response to front end as models.InterviewResponse
+		response := models.PackageInterviewResponse(session.SessionID, reply)
+
+		c.JSON(http.StatusOK, response)
 
 	}
 
@@ -121,9 +121,11 @@ func continueInterviewHandler(client *ai.GPTClient, sessionStore *interview.Sess
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"reply": reply,
-		})
+		// package response to front end as models.InterviewResponse
+		response := models.PackageInterviewResponse(sessionID, reply)
+
+		// send back response
+		c.JSON(http.StatusOK, response)
 	}
 
 }
