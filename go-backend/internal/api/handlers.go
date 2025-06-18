@@ -108,9 +108,7 @@ func continueInterviewHandler(client *ai.GPTClient, sessionStore *interview.Sess
 		sessionStore.UpdateChatHistory(sessionID, interview.PackageMessage("assistant", reply))
 
 		// set next state
-		sessionStore.SetState(sessionID, nextState)
-
-		// session, err := sessionStore.GetSession(sessionID)
+		err = sessionStore.SetState(sessionID, nextState)
 
 		// handle error
 		if err != nil {

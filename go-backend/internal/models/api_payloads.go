@@ -2,8 +2,8 @@ package models
 
 // interview response to front end
 type InterviewResponse struct {
-	SessionID    string `json:"sessionID"`
-	ResponseText string `json:"responseText"`
+	SessionID    string `json:"session_id"`
+	ResponseText string `json:"response_text"`
 }
 
 func PackageInterviewResponse(sessionID string, responseText string) InterviewResponse {
@@ -15,6 +15,6 @@ func PackageInterviewResponse(sessionID string, responseText string) InterviewRe
 
 // request from frontend with session id and user input
 type ContinueInterviewRequest struct {
-	SessionID string `json:"sessionID"`
+	SessionID string `json:"session_id"`
 	Input     string `json:"input"`
 }

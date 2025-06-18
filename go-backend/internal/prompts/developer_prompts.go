@@ -15,8 +15,7 @@ Do not present the problem yet.
 `,
 
 	models.PresentProblemState: `
-Present a vague, open-ended version of the coding problem to encourage the candidate to ask clarifying questions.
-Avoid using specific terms like 'graph', 'palindrome', etc.
+Present an open-ended version of the coding problem to encourage the candidate to ask clarifying questions.
 `,
 
 	models.ClarifyState: `
