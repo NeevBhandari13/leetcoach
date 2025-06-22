@@ -26,26 +26,28 @@ func startInterviewHandler(client *ai.GPTClient, sessionStore *interview.Session
 	return func(c *gin.Context) {
 		session := sessionStore.CreateSession()
 
-		instructions := prompts.GetInstructions()
-		developerPrompt := prompts.GetDeveloperPrompt(session.State)
-		chatHistory := sessionStore.GetChatHistory(session.SessionID)
+		// instructions := prompts.GetInstructions()
+		// developerPrompt := prompts.GetDeveloperPrompt(session.State)
+		// chatHistory := sessionStore.GetChatHistory(session.SessionID)
 
-		gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
+		// gptRequest := ai.PackageGPTRequest(instructions, developerPrompt, chatHistory)
 
-		reply, newState, err := client.CallGPT(gptRequest)
-		// handle error
-		if err != nil {
-			// send back response with StatusInternalServerError code and error message in gin.H
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
+		// reply, newState, err := client.CallGPT(gptRequest)
+		// // handle error
+		// if err != nil {
+		// 	// send back response with StatusInternalServerError code and error message in gin.H
+		// 	c.JSON(http.StatusInternalServerError, gin.H{
+		// 		"error": err.Error(),
+		// 	})
+		// 	return
+		// }
+
+		reply := "Hello! Welcome to LeetCoach! Today we are going to be running a technical interview going over a coding problem together. Remember I'm here to help you! Are you ready to get started?"
 
 		// add the llm response to chat history
 		sessionStore.UpdateChatHistory(session.SessionID, interview.PackageMessage("assistant", reply))
 		// set new state if need be
-		sessionStore.SetState(session.SessionID, newState)
+		// sessionStore.SetState(session.SessionID, newState)
 
 		// package response to front end as models.InterviewResponse
 		response := models.PackageInterviewResponse(session.SessionID, reply)

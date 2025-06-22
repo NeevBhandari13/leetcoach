@@ -15,6 +15,7 @@ func main() {
 	sessionStore := interview.NewSessionStore()
 
 	router := gin.Default()                          // starts default Gin router with logging and recovery
+	api.SetupMiddleware(router)                      // sets up middleware for gin router
 	api.SetupRoutes(router, gptClient, sessionStore) // sets up the routes for the API
 	router.Run(":8080")                              // starts the server on port 8080
 }
