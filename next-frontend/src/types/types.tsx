@@ -5,7 +5,7 @@ export interface Message {
 
 export interface StartInterviewResponse {
   session_id: string;
-  reply: string;
+  responseText: string;
 }
 
 export interface ContinueInterviewRequest {
@@ -14,5 +14,5 @@ export interface ContinueInterviewRequest {
 }
 
 export interface ContinueInterviewResponse {
-  reply: string;
+  responseText: string;
 }

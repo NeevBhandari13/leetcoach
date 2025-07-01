@@ -24,6 +24,6 @@ func SetupMiddleware(router *gin.Engine) {
 func SetupRoutes(router *gin.Engine, gptClient *ai.GPTClient, sessionStore *interview.SessionStore) {
 	// defines a post request to the /start-interview endpoint which will call the startInterviewHandler function
 	router.GET("/test", testHandler)
-	router.GET("/start-interview", startInterviewHandler(gptClient, sessionStore))
-	router.POST("/continue-interview", continueInterviewHandler(gptClient, sessionStore))
+	router.GET("/api/start-interview", startInterviewHandler(gptClient, sessionStore))
+	router.POST("/api/continue-interview", continueInterviewHandler(gptClient, sessionStore))
 }

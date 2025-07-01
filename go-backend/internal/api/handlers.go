@@ -50,7 +50,7 @@ func startInterviewHandler(client *ai.GPTClient, sessionStore *interview.Session
 		// sessionStore.SetState(session.SessionID, newState)
 
 		// package response to front end as models.InterviewResponse
-		response := models.PackageInterviewResponse(session.SessionID, reply)
+		response := models.PackageStartInterviewResponse(session.SessionID, reply)
 
 		c.JSON(http.StatusOK, response)
 
@@ -122,7 +122,7 @@ func continueInterviewHandler(client *ai.GPTClient, sessionStore *interview.Sess
 		}
 
 		// package response to front end as models.InterviewResponse
-		response := models.PackageInterviewResponse(sessionID, reply)
+		response := models.PackageContinueInterviewResponse(reply)
 
 		// send back response
 		c.JSON(http.StatusOK, response)
