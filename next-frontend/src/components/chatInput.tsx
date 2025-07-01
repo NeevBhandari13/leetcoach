@@ -10,6 +10,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
     // creates the message state in component, initialises it to an empty string
     const [message, setMessage] = useState('');
 
+    // the target is the  native HTMLInputElement rendered in the ChatTextField component (which is specified) and the value is the current input in it, setMessage is a function which updates the message state to the value in the input, we defined it above
+    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(e.target.value)
+    }
+
+    /**
+     * Checks if the message is not empty then calls the onSend function which is passed in as a prop and resets the message state to an empty string.
+     * This function is triggered when the user clicks the send button.
+     */
     const handleSend = () => {
     if (message.trim() !== '') { // checks the message is not empty, trim gets rid of whitespace
       onSend(message); // calls the onSend function which is passed in as a prop
@@ -20,8 +29,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
     return (
     <div style={{ display: 'flex', marginTop: '10px' }}>
         {/* Chat text field is the chat box, the message value is stored in this component */}
-        {/* for onChange, e is the React.ChangeEvent<HTMLInputElement>, the target is the  native HTML <input> element rendered in the ChatTextField component and the value is the current input in it, setMessage is a function which updates the message state to the value in the input, we defined it above */}
-      <ChatTextField value={message} onChange={(e) => setMessage(e.target.value)} disabled = {false} /> 
+        {/* onChange triggers the handleInput function everytime the input changes */}
+      <ChatTextField value={message} onChange={handleInput} disabled = {false} /> 
         {/* Passes down the handleSend function which is passed as a prop, disables the button if the message is empty */}
       <SendButton onClick={handleSend} disabled={!message.trim()} />
     </div>
