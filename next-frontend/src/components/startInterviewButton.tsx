@@ -2,6 +2,7 @@ import React, { useState } from 'react'; // react hook to manage state of compon
 import { useRouter } from 'next/router'; // next.js router hook to move between pages
 import { StartInterviewResponse } from '@/types/types'; // import StartInterviewResponse type
 import axios from '@/utils/axios';
+import { init } from 'next/dist/compiled/webpack/webpack';
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
@@ -23,24 +24,27 @@ export default function StartInterviewButton() {
         try {
             const startInterviewURL = `${backendUrl}/start-interview`; // url to start interview
             // call start interview api
-            const response = await axios.get(startInterviewURL);
+
+            const response = await fetch(startInterviewURL, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
             
             // response.json() returns a promise that resolves to the JSON data
             // the await keyword is used to wait for the promise to resolve so we get the data rather than the promise
             // the data is then assigned to the StartInterviewResponse type in the data variable
-            // ABOVE IS FOR FETCH
-            // axios returns a promise that resolves to the response data
-            const data: StartInterviewResponse = response.data
-
-            console.log(data)
-
+            const data = await response.json();
+            
+            
             // router.push allows us to move to the chat page with the sessionID and response as query parameters
             // the query parameters means we store them and have them available when the page loads
             router.push({
                 pathname: '/chat',
                 query: {
                 sessionID: data.session_id,
-                reply: data.responseText,
+                initialText: data.response_text,
                 },
             });
 

@@ -4,12 +4,12 @@ export interface Message {
 }
 
 export interface StartInterviewResponse {
-  session_id: string;
-  responseText: string;
+  sessionId: string;
+  initialText: string;
 }
 
 export interface ContinueInterviewRequest {
-  sessionID: string;
+  sessionId: string;
   input: string;
 }
 
