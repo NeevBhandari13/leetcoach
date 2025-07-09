@@ -1,8 +1,6 @@
 import React, { useState } from 'react'; // react hook to manage state of components
 import { useRouter } from 'next/router'; // next.js router hook to move between pages
 import { StartInterviewResponse } from '@/types/types'; // import StartInterviewResponse type
-import axios from '@/utils/axios';
-import { init } from 'next/dist/compiled/webpack/webpack';
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 

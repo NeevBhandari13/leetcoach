@@ -1,5 +1,6 @@
 import { Send } from "lucide";
 import React from "react";
+import styles from "@/styles/sendButton.module.css";
 
 interface SendButtonProps {
     onClick: () => void;
@@ -10,9 +11,9 @@ const SendButton: React.FC<SendButtonProps> = ({ onClick, disabled }) => {
 
     return (
         <button 
+            className="button"
             onClick={onClick} 
             disabled={disabled}
-            style={{ padding: '10px 20px', marginLeft: '10px', fontSize: '16px' }}
         >
             Send
         </button>

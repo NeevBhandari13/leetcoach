@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ChatTextField from './chatTextField';
 import SendButton from './sendButton';
+import styles from "@/styles/ChatInput.module.css";
 
 interface ChatInputProps {
     onSend: (input: string) => void;
@@ -27,7 +28,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
     }
 
     return (
-    <div style={{ display: 'flex', marginTop: '10px' }}>
+    <div className={styles.chatInput}>
         {/* Chat text field is the chat box, the message value is stored in this component */}
         {/* onChange triggers the handleInput function everytime the input changes */}
       <ChatTextField value={message} onChange={handleInput} disabled = {false} /> 

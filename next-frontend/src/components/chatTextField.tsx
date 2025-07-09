@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "@/styles/chatTextField.module.css";
 
 interface ChatTextFieldProps {
     value: string;
@@ -12,10 +13,10 @@ const ChatTextField: React.FC<ChatTextFieldProps> = ({ value, onChange, disabled
     <input
       type="text" // type of input
       value={value} // sets the value of the input field to the value of the value prop
+      className={styles.inputField}
       onChange={onChange} // sets the onChange event handler to the onChange prop
       disabled={disabled} // sets the disabled attribute to the disabled prop
       placeholder="Type your message..."
-      style={{ flex: 1, padding: '10px', fontSize: '16px' }}
     />
   );
 };
