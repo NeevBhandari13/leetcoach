@@ -1,12 +1,13 @@
-.inputWrapper {
+.chatInput {
   display: flex;
-  margin-top: 15px;
-  padding: 10px;
   position: fixed;
-  bottom: 10%;
-  left: 0;
-  right: 0;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  bottom: 10%; /* or use 20px for exact spacing */
+  left: 50%; 
+  transform: translateX(-50%); /* center horizontally */
+  width: 60vw; /* 60% of the viewport width */
+  max-width: 600px; /* optional: don't exceed this width */
+  padding: 10px;
+  background-color: white; /* optional: background to separate from chat */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* optional: subtle top shadow */
+  border-radius: 10px; /* optional: rounded look */
 }
