@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'; // next.js router hook to move between 
 import { ContinueInterviewRequest, Message } from '../types/types'; // import StartInterviewResponse type
 import ChatWindow from '@/components/chatWindow';
 import ChatInput from '@/components/chatInput';
+import Header from '@/components/Header';
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
@@ -73,13 +74,10 @@ const ChatPage = () => {
 
         return (
             <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-                <h1>LeetCoach</h1>
-                <div>
-                    <ChatWindow messages={messages}/>
-                </div>
-                <div>
-                    <ChatInput onSend={handleSend}/>
-                </div>
+                <Header />
+                <ChatWindow messages={messages}/>
+                <ChatInput onSend={handleSend}/>
+
                 
                 
             </div>

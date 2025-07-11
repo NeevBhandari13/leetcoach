@@ -16,6 +16,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
         setMessage(e.target.value)
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && message.trim() !== '') {
+        handleSend();
+      }
+    };
+
     /**
      * Checks if the message is not empty then calls the onSend function which is passed in as a prop and resets the message state to an empty string.
      * This function is triggered when the user clicks the send button.
@@ -31,7 +37,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
     <div className={styles.chatInput}>
         {/* Chat text field is the chat box, the message value is stored in this component */}
         {/* onChange triggers the handleInput function everytime the input changes */}
-      <ChatTextField value={message} onChange={handleInput} disabled = {false} /> 
+      <ChatTextField value={message} onChange={handleInput} onKeyDown={handleKeyDown} disabled = {false} /> 
         {/* Passes down the handleSend function which is passed as a prop, disables the button if the message is empty */}
       <SendButton onClick={handleSend} disabled={!message.trim()} />
     </div>
