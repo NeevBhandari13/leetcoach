@@ -56,8 +56,6 @@ const ChatPage = () => {
             
             // response.json() parses the response body as JSON into a JavaScript object
             console.log(response)
-            const text = await response.text();
-            console.log("Raw response text:", text);
             const data = await response.json();
             
             // unpack json into message object
@@ -67,6 +65,8 @@ const ChatPage = () => {
             }
 
             setMessages(prevMessages => [...prevMessages, newMessage]);
+
+            console.log(messages)
 
 
         } catch (error) {

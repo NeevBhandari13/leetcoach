@@ -32,8 +32,6 @@ func (s *SessionStore) UpdateChatHistory(sessionID string, message models.Messag
 		log.Printf("❌ sessionID not found in session store: %s", sessionID)
 		debug.PrintStack() // helpful to trace where this was called
 		return
-	} else {
-		log.Printf("✅ sessionID found in session store: %s", sessionID)
 	}
 
 	session.ChatHistory = append(session.ChatHistory, message)
@@ -51,8 +49,6 @@ func (s *SessionStore) AppendAndReadChatHistory(sessionID string, message models
 		log.Printf("❌ sessionID not found in session store: %s", sessionID)
 		debug.PrintStack() // helpful to trace where this was called
 		return []models.Message{}
-	} else {
-		log.Printf("✅ sessionID found in session store: %s", sessionID)
 	}
 
 	session.ChatHistory = append(session.ChatHistory, message)
