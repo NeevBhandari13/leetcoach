@@ -1,8 +1,8 @@
 package models
 
 type Session struct {
-	SessionID   string    `json:"session_id"`
+	SessionID   string    `json:"sessionId"`
 	State       State     `json:"state"`
-	ChatHistory []Message `json:"chat_history"`
-	ProblemText string    `json:"problem_text"`
+	ChatHistory []Message `json:"chatHistory"`
+	ProblemText string    `json:"problemText"`
 }

@@ -17,7 +17,6 @@ func SetupMiddleware(router *gin.Engine) {
 		AllowCredentials: true,                                         // allows cookies and auth headers in requests
 		MaxAge:           12 * time.Hour,                               // cache preflight requests for 12 hours which is the check for permissions
 	}))
-	// add more middleware here if needed
 }
 
 // gin.Engine is the main router for Gin, which handles HTTP requests

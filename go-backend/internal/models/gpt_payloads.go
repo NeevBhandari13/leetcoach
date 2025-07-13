@@ -11,5 +11,5 @@ type AiServiceResponse struct {
 
 type GPTResponse struct {
 	Reply        string `json:"reply"`
-	CurrentState State  `json:"current_state"`
+	CurrentState State  `json:"currentState"`
 }

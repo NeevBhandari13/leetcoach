@@ -2,8 +2,8 @@ package models
 
 // interview response to front end
 type startInterviewResponse struct {
-	SessionID    string `json:"session_id"`
-	ResponseText string `json:"response_text"`
+	SessionID    string `json:"sessionId"`
+	ResponseText string `json:"responseText"`
 }
 
 func PackageStartInterviewResponse(sessionID string, responseText string) startInterviewResponse {
@@ -15,13 +15,13 @@ func PackageStartInterviewResponse(sessionID string, responseText string) startI
 
 // request from frontend with session id and user input
 type ContinueInterviewRequest struct {
-	SessionID string `json:"session_id"`
+	SessionID string `json:"sessionId"`
 	Input     string `json:"input"`
 }
 
 // response from backend with session id and response text
 type ContinueInterviewResponse struct {
-	ResponseText string `json:"response_text"`
+	ResponseText string `json:"responseText"`
 }
 
 func PackageContinueInterviewResponse(responseText string) ContinueInterviewResponse {

@@ -22,9 +22,14 @@ func NewSessionStore() *SessionStore {
 	}
 }
 
-func (s *SessionStore) CreateSession() *models.Session {
+func (s *SessionStore) CreateSession(sessionID string) *models.Session {
+
+	if sessionID == "" {
+		sessionID = utils.GenerateSessionID()
+	}
+
 	session := &models.Session{
-		SessionID:   utils.GenerateSessionID(), // helper function
+		SessionID:   sessionID, // helper function
 		State:       models.IntroState,
 		ChatHistory: []models.Message{},
 		ProblemText: problems.GetProblemText(),
@@ -34,7 +39,7 @@ func (s *SessionStore) CreateSession() *models.Session {
 	s.sessions[session.SessionID] = session
 	s.mu.Unlock()
 
-	return session
+	return s.sessions[session.SessionID]
 }
 
 func (s *SessionStore) GetSession(sessionID string) (*models.Session, error) {

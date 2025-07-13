@@ -36,7 +36,8 @@ const ChatPage = () => {
         setMessages(prevMessages => [...prevMessages, { role: 'user', content: message }]);
         
         try {
-            
+
+            console.log("Session ID: ", String(sessionID));
             
             // package message into continue interview request
             const continueInterviewRequest: ContinueInterviewRequest = {
@@ -54,6 +55,9 @@ const ChatPage = () => {
             })
             
             // response.json() parses the response body as JSON into a JavaScript object
+            console.log(response)
+            const text = await response.text();
+            console.log("Raw response text:", text);
             const data = await response.json();
             
             // unpack json into message object

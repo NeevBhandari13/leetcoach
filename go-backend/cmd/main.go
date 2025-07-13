@@ -12,7 +12,7 @@ func main() {
 	gptClient := ai.NewGPTClient()
 
 	// initialises new session storage
-	sessionStore := interview.NewSessionStore()
+	sessionStore := interview.NewSessionStore() // initialises new session store correctly with empty map
 
 	router := gin.Default()                          // starts default Gin router with logging and recovery
 	api.SetupMiddleware(router)                      // sets up middleware for gin router

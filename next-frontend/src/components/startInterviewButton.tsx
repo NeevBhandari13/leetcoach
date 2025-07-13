@@ -41,8 +41,8 @@ export default function StartInterviewButton() {
             router.push({
                 pathname: '/chat',
                 query: {
-                sessionID: data.session_id,
-                initialText: data.response_text,
+                sessionID: data.sessionId,
+                initialText: data.responseText,
                 },
             });
 
