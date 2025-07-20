@@ -14,5 +14,5 @@ export interface ContinueInterviewRequest {
 }
 
 export interface ContinueInterviewResponse {
-  responseText: string;
+  reply: string;
 }

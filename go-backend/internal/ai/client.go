@@ -56,6 +56,8 @@ func (client *GPTClient) CallGPT(gptRequest models.GPTRequest) (string, models.S
 		return "", models.NilState, err
 	}
 
+	log.Println("Response: ", response)
+
 	// create variables for the ai service and gpt responses
 	var aiServiceResponse models.AiServiceResponse
 	var gptResponse models.GPTResponse
@@ -69,12 +71,16 @@ func (client *GPTClient) CallGPT(gptRequest models.GPTRequest) (string, models.S
 	// close response body
 	defer response.Body.Close()
 
+	log.Println("AI Service Response: ", aiServiceResponse)
+
 	// JSON from gpt is nested in response from python microservice
 	// decode json into GPTResponse
 	err = json.Unmarshal([]byte(aiServiceResponse.Response), &gptResponse)
 	if err != nil {
 		return "", models.NilState, err
 	}
+
+	log.Println("gptResponse: ", gptResponse)
 
 	//TODO: Handle state validation
 

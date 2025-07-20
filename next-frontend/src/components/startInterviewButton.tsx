@@ -42,7 +42,7 @@ export default function StartInterviewButton() {
                 pathname: '/chat',
                 query: {
                 sessionID: data.sessionId,
-                initialText: data.responseText,
+                initialText: data.reply,
                 },
             });
 

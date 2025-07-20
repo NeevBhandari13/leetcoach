@@ -20,18 +20,18 @@ def ping():
     return {"status": "ok"}
 
 # just a test
-@app.get("/gpt-test")
-def test_gpt():
-    instructions = "You are a helpful assistant."
-    input = [{"role": "user", "content": "Tell me a funny joke"},
-             {"role": "assistant", "content": "Why did the chicken cross the road? To get to the other side!"},
-             {"role": "user", "content": "Why is that funny?"},
-             {"role": "assistant", "content": "Because it was a chicken joke!"},
-             {"role": "user", "content": "What is a chicken joke?"},
-             {"role": "developer", "content": "Talk in old English"}]
+# @app.get("/gpt-test")
+# def test_gpt():
+#     instructions = "You are a helpful assistant."
+#     input = [{"role": "user", "content": "Tell me a funny joke"},
+#              {"role": "assistant", "content": "Why did the chicken cross the road? To get to the other side!"},
+#              {"role": "user", "content": "Why is that funny?"},
+#              {"role": "assistant", "content": "Because it was a chicken joke!"},
+#              {"role": "user", "content": "What is a chicken joke?"},
+#              {"role": "developer", "content": "Talk in old English"}]
     
-    response = chat_with_gpt(instructions, input)
-    return {"response": response.output_text}
+#     response = chat_with_gpt(instructions, input)
+#     return {"response": response.output_text}
 
 # @app.get("/start-interview")
 # def start_interview():
@@ -56,5 +56,6 @@ def chat(request: GPTRequest):
     input = request.input
     response = chat_with_gpt(instructions, input)
     # JSONResponse creates JSON-encoded response with 200 status code and Content-Type: application/json header
+    print(response.output_text)
     return JSONResponse(content={"response": response.output_text})
 

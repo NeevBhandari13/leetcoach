@@ -28,6 +28,7 @@ func (s *SessionStore) UpdateChatHistory(sessionID string, message models.Messag
 	defer s.mu.Unlock()
 
 	session, ok := s.sessions[sessionID]
+	// TODO: Fix error handling
 	if !ok {
 		log.Printf("❌ sessionID not found in session store: %s", sessionID)
 		debug.PrintStack() // helpful to trace where this was called

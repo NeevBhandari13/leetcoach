@@ -9,7 +9,7 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
 const ChatPage = () => {
     const router = useRouter(); // initialises router to be able to move between pages and access query parameters
-    const { sessionID, initialText } = router.query; // gets the session ID and responseText from the query parameters
+    const { sessionID, initialText } = router.query; // gets the session ID and reply from the query parameters
     
     // initialises messages state and setMessages function to manipulate messages
     // the state of a component always has a type (similar to an class' attribute)
@@ -29,7 +29,6 @@ const ChatPage = () => {
         }
     }, [initialText])
 
-    
 
     const handleSend = async (message: string) => {
         // add new message to our messages state
@@ -81,9 +80,6 @@ const ChatPage = () => {
                 <Header />
                 <ChatWindow messages={messages}/>
                 <ChatInput onSend={handleSend}/>
-
-                
-                
             </div>
         )
     }

@@ -2,14 +2,14 @@ package models
 
 // interview response to front end
 type startInterviewResponse struct {
-	SessionID    string `json:"sessionId"`
-	ResponseText string `json:"responseText"`
+	SessionID string `json:"sessionId"`
+	Reply     string `json:"reply"`
 }
 
-func PackageStartInterviewResponse(sessionID string, responseText string) startInterviewResponse {
+func PackageStartInterviewResponse(sessionID string, reply string) startInterviewResponse {
 	return startInterviewResponse{
-		SessionID:    sessionID,
-		ResponseText: responseText,
+		SessionID: sessionID,
+		Reply:     reply,
 	}
 }
 
@@ -21,11 +21,11 @@ type ContinueInterviewRequest struct {
 
 // response from backend with session id and response text
 type ContinueInterviewResponse struct {
-	ResponseText string `json:"responseText"`
+	Reply string `json:"reply"`
 }
 
-func PackageContinueInterviewResponse(responseText string) ContinueInterviewResponse {
+func PackageContinueInterviewResponse(reply string) ContinueInterviewResponse {
 	return ContinueInterviewResponse{
-		ResponseText: responseText,
+		Reply: reply,
 	}
 }
