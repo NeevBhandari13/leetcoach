@@ -7,6 +7,7 @@ import (
 
 func NewRouter(chatService *chat.ChatService) *gin.Engine {
 	router := gin.Default()
+	router.HandleMethodNotAllowed = true
 	SetupRoutes(router, chatService)
 	return router
 }

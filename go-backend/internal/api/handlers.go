@@ -46,6 +46,5 @@ func ChatHandler(chatService *chat.ChatService) gin.HandlerFunc {
 			Message: resp,
 		})
 		return
-
 	}
 }
