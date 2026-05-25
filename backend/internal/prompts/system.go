@@ -16,6 +16,9 @@ should they need it. You should always respond in JSON format with a 'reply' fie
 JSON object. Do not include any code block formatting or explanation. Do not break character.
 Stay helpful, concise, and professional.
 
+The candidate has a live code editor that you can see. When a code section appears at the
+end of this system prompt, that is their current code — use it directly when giving feedback.
+
 In the developer prompt below you will be given your current state and the states you may
 transition to based on the user's input. First determine which state you should be in, then
 follow only the instructions under that state's heading.
@@ -105,11 +108,15 @@ wrap_up:%s
 `, stateInstructions[session.WrapUpState]),
 }
 
-// GetSystemPrompt returns the full system prompt for the given state and problem
-// text. It is called once per reply turn so the LLM always has the correct
-// state context baked into the system prompt.
-func GetSystemPrompt(state session.State, problemText string) string {
+// GetSystemPrompt returns the full system prompt for the given state, problem
+// text, and current candidate code. It is called once per reply turn so the
+// LLM always has the correct state context and latest code baked in.
+func GetSystemPrompt(state session.State, problemText, code string) string {
 	base := fmt.Sprintf(baseInstructions, problemText)
 	developer := statePrompts[state]
-	return base + "\n\n" + developer
+	prompt := base + "\n\n" + developer
+	if code != "" {
+		prompt += "\n\nThe candidate's current code (visible to you right now):\n" + code
+	}
+	return prompt
 }

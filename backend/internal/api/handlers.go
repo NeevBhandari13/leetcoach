@@ -36,6 +36,7 @@ type startInterviewResponse struct {
 
 type replyRequest struct {
 	Message string `json:"message"`
+	Code    string `json:"code"`
 }
 
 type replyResponse struct {
@@ -98,7 +99,7 @@ func ReplyHandler(store Store) gin.HandlerFunc {
 			return
 		}
 
-		systemPrompt := prompts.GetSystemPrompt(sess.State, sess.ProblemText)
+		systemPrompt := prompts.GetSystemPrompt(sess.State, sess.ProblemText, req.Code)
 
 		raw, err := store.Reply(c, sessionID, systemPrompt, req.Message)
 		if err != nil {

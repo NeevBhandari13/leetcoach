@@ -48,7 +48,7 @@ func TestGetSystemPrompt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GetSystemPrompt(tt.state, tt.problemText)
+			got := GetSystemPrompt(tt.state, tt.problemText, "")
 
 			if got == "" {
 				t.Fatal("expected non-empty system prompt")

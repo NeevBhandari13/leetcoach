@@ -1,9 +1,7 @@
 .chatWindow {
-  max-width: 60%;
-  margin: 0 auto;
-  padding-bottom: 100px; /* room for input */
-  height: calc(100vh - 425px); /* fits screen excluding header and input */
+  flex: 1;
   overflow-y: auto;
+  padding: 12px;
   display: flex;
   flex-direction: column;
 }
