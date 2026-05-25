@@ -17,15 +17,19 @@ import (
 // mockStore implements the Store interface with injectable functions so each
 // test case can control exactly what the store returns.
 type mockStore struct {
-	createFn func(ctx context.Context, sessionID string) (*session.Session, error)
-	updateFn func(ctx context.Context, sessionID string, message llm.Message) error
-	getFn    func(ctx context.Context, sessionID string) (*session.Session, error)
-	replyFn  func(ctx context.Context, sessionID, system, userMessage string) (string, error)
-	stateFn  func(ctx context.Context, sessionID string, state session.State) error
+	problemFn func(ctx context.Context) (string, error)
+	createFn  func(ctx context.Context, sessionID, problemText string) (*session.Session, error)
+	updateFn  func(ctx context.Context, sessionID string, message llm.Message) error
+	getFn     func(ctx context.Context, sessionID string) (*session.Session, error)
+	replyFn   func(ctx context.Context, sessionID, system, userMessage string) (string, error)
+	stateFn   func(ctx context.Context, sessionID string, state session.State) error
 }
 
-func (m *mockStore) CreateSession(ctx context.Context, sessionID string) (*session.Session, error) {
-	return m.createFn(ctx, sessionID)
+func (m *mockStore) GetRandomProblemText(ctx context.Context) (string, error) {
+	return m.problemFn(ctx)
+}
+func (m *mockStore) CreateSession(ctx context.Context, sessionID, problemText string) (*session.Session, error) {
+	return m.createFn(ctx, sessionID, problemText)
 }
 func (m *mockStore) UpdateChatHistory(ctx context.Context, sessionID string, msg llm.Message) error {
 	return m.updateFn(ctx, sessionID, msg)
@@ -43,7 +47,8 @@ func (m *mockStore) SetState(ctx context.Context, sessionID string, state sessio
 // successStore returns a store where every method succeeds with sensible defaults.
 func successStore() *mockStore {
 	return &mockStore{
-		createFn: func(_ context.Context, _ string) (*session.Session, error) {
+		problemFn: func(_ context.Context) (string, error) { return "Given an array...", nil },
+		createFn: func(_ context.Context, _, _ string) (*session.Session, error) {
 			return &session.Session{SessionID: "test-id", State: session.IntroState}, nil
 		},
 		updateFn: func(_ context.Context, _ string, _ llm.Message) error { return nil },
@@ -81,7 +86,8 @@ func TestStartInterviewHandler(t *testing.T) {
 		{
 			name: "returns 500 when CreateSession fails",
 			store: &mockStore{
-				createFn: func(_ context.Context, _ string) (*session.Session, error) {
+				problemFn: func(_ context.Context) (string, error) { return "problem", nil },
+				createFn: func(_ context.Context, _, _ string) (*session.Session, error) {
 					return nil, errors.New("db error")
 				},
 			},
@@ -90,7 +96,8 @@ func TestStartInterviewHandler(t *testing.T) {
 		{
 			name: "returns 500 when UpdateChatHistory fails",
 			store: &mockStore{
-				createFn: func(_ context.Context, _ string) (*session.Session, error) {
+				problemFn: func(_ context.Context) (string, error) { return "problem", nil },
+				createFn: func(_ context.Context, _, _ string) (*session.Session, error) {
 					return &session.Session{SessionID: "test-id"}, nil
 				},
 				updateFn: func(_ context.Context, _ string, _ llm.Message) error {

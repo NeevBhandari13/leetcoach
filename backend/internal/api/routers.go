@@ -1,19 +1,27 @@
 package api
 
 import (
-	"github.com/NeevBhandari13/leetcoach/internal/chat"
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(chatService *chat.ChatService, store Store) *gin.Engine {
+func NewRouter(store Store) *gin.Engine {
 	router := gin.Default()
 	router.HandleMethodNotAllowed = true
-	SetupRoutes(router, chatService, store)
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Content-Type"},
+		MaxAge:           12 * time.Hour,
+	}))
+	SetupRoutes(router, store)
 	return router
 }
 
-func SetupRoutes(router *gin.Engine, chatService *chat.ChatService, store Store) {
-	router.POST("/chat", ChatHandler(chatService))
+func SetupRoutes(router *gin.Engine, store Store) {
 	router.POST("/start", StartInterviewHandler(store))
+	router.GET("/sessions/:id", GetSessionHandler(store))
 	router.POST("/sessions/:id/reply", ReplyHandler(store))
 }

@@ -39,16 +39,37 @@ func NewSessionStore(db *sql.DB, client llm.Client) *SessionStore {
 	return &SessionStore{db: db, client: client}
 }
 
-func (s *SessionStore) CreateSession(ctx context.Context, sessionID string) (*Session, error) {
+// GetRandomProblemText picks a random problem from the problems table and
+// returns it formatted for inclusion in the LLM system prompt.
+func (s *SessionStore) GetRandomProblemText(ctx context.Context) (string, error) {
+	var title, difficulty, description, constraints string
+	err := s.db.QueryRowContext(ctx,
+		`SELECT title, difficulty, description, COALESCE(constraints, '')
+		   FROM problems
+		  ORDER BY RANDOM()
+		  LIMIT 1`,
+	).Scan(&title, &difficulty, &description, &constraints)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("Title: %s\nDifficulty: %s\n\n%s\n\nConstraints: %s",
+		title, difficulty, description, constraints), nil
+}
+
+// CreateSession inserts a new session row with the given problem text and
+// returns the created session. Pass an empty sessionID to let Postgres generate
+// the UUID.
+func (s *SessionStore) CreateSession(ctx context.Context, sessionID, problemText string) (*Session, error) {
 	var row *sql.Row
 	if sessionID == "" {
 		row = s.db.QueryRowContext(ctx,
-			`INSERT INTO sessions DEFAULT VALUES RETURNING id, state, problem_text`,
+			`INSERT INTO sessions (problem_text) VALUES ($1) RETURNING id, state, problem_text`,
+			problemText,
 		)
 	} else {
 		row = s.db.QueryRowContext(ctx,
-			`INSERT INTO sessions (id) VALUES ($1) RETURNING id, state, problem_text`,
-			sessionID,
+			`INSERT INTO sessions (id, problem_text) VALUES ($1, $2) RETURNING id, state, problem_text`,
+			sessionID, problemText,
 		)
 	}
 

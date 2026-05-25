@@ -8,43 +8,36 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/NeevBhandari13/leetcoach/internal/chat"
 	"github.com/NeevBhandari13/leetcoach/internal/llm"
+	"github.com/NeevBhandari13/leetcoach/internal/session"
 )
 
-// noopFn is a mock send function that always succeeds — used when the LLM
-// response doesn't matter for the test, only the routing behaviour does.
-func noopFn(_ context.Context, _ string, _ []llm.Message) (string, error) {
-	return "ok", nil
-}
-
-func newNoopService() *chat.ChatService {
-	return chat.NewChatService(&mockLLMClient{sendFn: noopFn})
+// noopStore is a Store where every method succeeds and returns zero values.
+// Used for routing tests where only status codes matter, not business logic.
+var noopStore Store = &mockStore{
+	problemFn: func(_ context.Context) (string, error) { return "problem text", nil },
+	createFn: func(_ context.Context, _, _ string) (*session.Session, error) {
+		return &session.Session{SessionID: "test-id", State: session.IntroState}, nil
+	},
+	updateFn: func(_ context.Context, _ string, _ llm.Message) error { return nil },
+	getFn: func(_ context.Context, _ string) (*session.Session, error) {
+		return &session.Session{SessionID: "test-id", State: session.IntroState}, nil
+	},
+	replyFn: func(_ context.Context, _, _, _ string) (string, error) {
+		return `{"reply":"ok","current_state":"intro"}`, nil
+	},
+	stateFn: func(_ context.Context, _ string, _ session.State) error { return nil },
 }
 
 func TestNewRouter(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		{name: "returns non-nil engine"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			router := NewRouter(newNoopService(), nil)
-			if router == nil {
-				t.Fatal("expected non-nil router, got nil")
-			}
-		})
-	}
+	t.Run("returns non-nil engine", func(t *testing.T) {
+		if NewRouter(noopStore) == nil {
+			t.Fatal("expected non-nil router, got nil")
+		}
+	})
 }
 
 func TestSetupRoutes(t *testing.T) {
-	validBody := ChatRequest{
-		System:   "You are a technical interviewer.",
-		Messages: []llm.Message{{Role: "user", Content: "I am ready"}},
-	}
-
 	tests := []struct {
 		name       string
 		method     string
@@ -53,16 +46,28 @@ func TestSetupRoutes(t *testing.T) {
 		wantStatus int
 	}{
 		{
-			name:       "POST /chat is registered and returns 200",
+			name:       "POST /start is registered and returns 200",
 			method:     http.MethodPost,
-			path:       "/chat",
-			body:       validBody,
+			path:       "/start",
 			wantStatus: http.StatusOK,
 		},
 		{
-			name:       "GET /chat returns 405 method not allowed",
+			name:       "GET /sessions/:id is registered and returns 200",
 			method:     http.MethodGet,
-			path:       "/chat",
+			path:       "/sessions/test-id",
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "POST /sessions/:id/reply is registered and returns 200",
+			method:     http.MethodPost,
+			path:       "/sessions/test-id/reply",
+			body:       replyRequest{Message: "hello"},
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "GET /start returns 405 method not allowed",
+			method:     http.MethodGet,
+			path:       "/start",
 			wantStatus: http.StatusMethodNotAllowed,
 		},
 		{
@@ -75,7 +80,7 @@ func TestSetupRoutes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			router := NewRouter(newNoopService(), nil)
+			router := NewRouter(noopStore)
 
 			var bodyBytes []byte
 			if tt.body != nil {
@@ -85,7 +90,6 @@ func TestSetupRoutes(t *testing.T) {
 			req := httptest.NewRequest(tt.method, tt.path, bytes.NewBuffer(bodyBytes))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
-
 			router.ServeHTTP(w, req)
 
 			if w.Code != tt.wantStatus {
