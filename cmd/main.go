@@ -21,7 +21,14 @@ func main() {
 		fmt.Fprintf(os.Stderr, "db error: %v\n", err)
 		os.Exit(1)
 	}
-	db.Migrate(sqlDb)
+	if err := db.Migrate(sqlDb); err != nil {
+		fmt.Fprintf(os.Stderr, "migrate error: %v\n", err)
+		os.Exit(1)
+	}
+	if err := db.Seed(sqlDb); err != nil {
+		fmt.Fprintf(os.Stderr, "seed error: %v\n", err)
+		os.Exit(1)
+	}
 	client := NewLLMClient()                   // llm client interface
 	chatService := chat.NewChatService(client) // chat service with the reply function
 	router := api.NewRouter(chatService)       // creates new router
