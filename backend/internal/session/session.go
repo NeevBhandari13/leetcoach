@@ -12,8 +12,13 @@ import (
 type State string
 
 const (
-	IntroState State = "intro"
-	NilState   State = ""
+	NilState            State = ""
+	IntroState          State = "intro"
+	PresentProblemState State = "present_problem"
+	ClarifyState        State = "clarify"
+	InitialSolutionState State = "initial_solution"
+	OptimisationState   State = "optimisation"
+	WrapUpState         State = "wrap_up"
 )
 
 var ErrNotFound = errors.New("session not found")
