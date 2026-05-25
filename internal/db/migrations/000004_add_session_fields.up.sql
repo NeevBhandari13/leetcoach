@@ -1,0 +1,2 @@
+ALTER TABLE sessions ADD COLUMN state TEXT NOT NULL DEFAULT 'intro';
+ALTER TABLE sessions ADD COLUMN problem_text TEXT NOT NULL DEFAULT '';

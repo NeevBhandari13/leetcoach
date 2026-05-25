@@ -8,6 +8,7 @@ import (
 	"github.com/NeevBhandari13/leetcoach/internal/chat"
 	"github.com/NeevBhandari13/leetcoach/internal/db"
 	"github.com/NeevBhandari13/leetcoach/internal/llm"
+	"github.com/NeevBhandari13/leetcoach/internal/session"
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/joho/godotenv"
 )
@@ -29,10 +30,11 @@ func main() {
 		fmt.Fprintf(os.Stderr, "seed error: %v\n", err)
 		os.Exit(1)
 	}
-	client := NewLLMClient()                   // llm client interface
-	chatService := chat.NewChatService(client) // chat service with the reply function
-	router := api.NewRouter(chatService)       // creates new router
-	router.Run(":8080")                        // router on port 8080
+	client := NewLLMClient()                               // llm client interface
+	chatService := chat.NewChatService(client)             // chat service with the reply function
+	sessionStore := session.NewSessionStore(sqlDb, client) // session store backed by postgres
+	router := api.NewRouter(chatService, sessionStore)     // creates new router
+	router.Run(":8080")                                    // router on port 8080
 
 }
 

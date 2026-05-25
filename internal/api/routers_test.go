@@ -31,7 +31,7 @@ func TestNewRouter(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			router := NewRouter(newNoopService())
+			router := NewRouter(newNoopService(), nil)
 			if router == nil {
 				t.Fatal("expected non-nil router, got nil")
 			}
@@ -75,7 +75,7 @@ func TestSetupRoutes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			router := NewRouter(newNoopService())
+			router := NewRouter(newNoopService(), nil)
 
 			var bodyBytes []byte
 			if tt.body != nil {

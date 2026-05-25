@@ -1,0 +1,2 @@
+ALTER TABLE sessions DROP COLUMN IF EXISTS state;
+ALTER TABLE sessions DROP COLUMN IF EXISTS problem_text;
