@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		fmt.Println("godotenv error:", err)
 	}
 	sqlDb, err := db.Open(os.Getenv("DSN"))
