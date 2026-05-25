@@ -2,7 +2,9 @@ package llm
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"net/http"
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/anthropics/anthropic-sdk-go/option"
@@ -14,9 +16,17 @@ type AnthropicClient struct {
 }
 
 func NewAnthropicClient(apiKey string, anthropicModel anthropic.Model) *AnthropicClient {
+	// Go's TLS 1.3 is incompatible with api.anthropic.com; force TLS 1.2.
+	httpClient := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig:   &tls.Config{MaxVersion: tls.VersionTLS12},
+			ForceAttemptHTTP2: false,
+		},
+	}
 	return &AnthropicClient{
 		client: anthropic.NewClient(
 			option.WithAPIKey(apiKey),
+			option.WithHTTPClient(httpClient),
 		),
 		model: anthropicModel,
 	}
