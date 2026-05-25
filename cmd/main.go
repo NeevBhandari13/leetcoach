@@ -6,15 +6,22 @@ import (
 
 	"github.com/NeevBhandari13/leetcoach/internal/api"
 	"github.com/NeevBhandari13/leetcoach/internal/chat"
+	"github.com/NeevBhandari13/leetcoach/internal/db"
 	"github.com/NeevBhandari13/leetcoach/internal/llm"
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	if err := godotenv.Load("../.env"); err != nil {
+	if err := godotenv.Load(".env"); err != nil {
 		fmt.Println("godotenv error:", err)
 	}
+	sqlDb, err := db.Open(os.Getenv("DSN"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "db error: %v\n", err)
+		os.Exit(1)
+	}
+	db.Migrate(sqlDb)
 	client := NewLLMClient()                   // llm client interface
 	chatService := chat.NewChatService(client) // chat service with the reply function
 	router := api.NewRouter(chatService)       // creates new router
