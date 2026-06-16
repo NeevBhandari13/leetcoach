@@ -20,7 +20,6 @@ type Store interface {             type mockStore struct {
   GetSession(...)                    getFn     func(...) (*Session, error)
   Reply(...)                         replyFn   func(...) (string, error)
   SetState(...)                      stateFn   func(...) error
-  GenerateReview(...)                reviewFn  func(...) (string, error)
 }                                  }
 ```
 

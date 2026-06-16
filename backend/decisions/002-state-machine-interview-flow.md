@@ -21,7 +21,7 @@ stateDiagram-v2
     clarify --> initial_solution : candidate proposes approach
     initial_solution --> optimisation : baseline solution reached
     optimisation --> wrap_up : solution finalised
-    wrap_up --> [*] : POST /sessions/:id/review
+    wrap_up --> [*]
 ```
 
 ## How the LLM Advances State

@@ -14,9 +14,8 @@
   - Problems seeded from embedded `seed/problems.json` (idempotent on conflict)
 
 - **LLM layer** (`internal/llm`)
-  - `Client` / `ReviewClient` interfaces with Anthropic implementation
+  - `Client` interface with Anthropic implementation
   - `Send` — standard message turn (claude-sonnet-4-6, max 1024 tokens)
-  - `SendWithThinking` / `SendReview` — extended thinking for end-of-interview review (claude-opus-4-7, 16 000 tokens, 10 000 thinking budget)
   - TLS 1.2 forced on the HTTP client to work around a Go TLS 1.3 / Anthropic API incompatibility
 
 - **Session store** (`internal/session`)
@@ -26,7 +25,6 @@
   - `GetSession` — loads session + full ordered message history
   - `GetState` / `SetState` / `GetProblemText` / `UpdateChatHistory`
   - `Reply` — full LLM turn: insert user msg → fetch history → call LLM → insert assistant reply → return raw string
-  - `GenerateReview` — builds review prompt from full transcript, calls `reviewClient.SendReview`
 
 - **Prompts** (`internal/prompts`)
   - `GetSystemPrompt(state, problemText, code)` — base instructions + state-specific developer prompt + optional candidate code appended at the end
@@ -37,7 +35,6 @@
   - `POST /start` — picks random problem, creates session, returns hardcoded welcome + session ID
   - `GET /sessions/:id` — returns full session (state, problem_text, chat_history)
   - `POST /sessions/:id/reply` — one LLM turn, parses `{"reply","current_state"}` JSON, advances state machine
-  - `POST /sessions/:id/review` — triggers extended-thinking review generation
   - CORS configured for `http://localhost:3000`
 
 - **State machine**
@@ -58,9 +55,6 @@
   - Split-pane layout: resizable code editor (left) + chat panel (right)
   - Draggable divider (mouse drag, clamped 20–80%)
   - Code editor content sent with every reply so the LLM can see candidate's code
-  - Auto-triggers review fetch when state reaches `wrap_up`
-  - `reviewFetchedRef` prevents double-fetch on re-renders
-- **`ReviewModal`** — overlay modal with spinner while review loads, displays plain text review on completion
 - **`types/types.tsx`** — shared TypeScript interfaces for all API shapes
 - Session flow: `POST /start` → redirect to `/chat?sessionID=...&initialText=...` (welcome message passed in URL to avoid extra round-trip)
 
@@ -109,7 +103,6 @@
 │                    ◄──sessionID,msg──────┘                       │
 │                                          │                       │
 │                    POST /sessions/:id/reply (message + code)     │
-│                    POST /sessions/:id/review                     │
 │                    GET  /sessions/:id                            │
 └──────────────────────────────┬──────────────────────────────────┘
                                │ HTTP (localhost:8080)
@@ -125,11 +118,6 @@
 │                               prompts.GetSystemPrompt            │
 │                               session.Reply ──► llm.Client.Send  │
 │                               session.SetState                   │
-│                                                                  │
-│    ReviewHandler          ──► session.GenerateReview             │
-│                                    ──► llm.ReviewClient          │
-│                                        .SendReview               │
-│                                        (extended thinking)       │
 └──────────────────────────────┬──────────────────────────────────┘
                                │
 ┌──────────────────────────────▼──────────────────────────────────┐
@@ -140,7 +128,6 @@
 ┌──────────────────────────────▼──────────────────────────────────┐
 │  Anthropic API                                                   │
 │  claude-sonnet-4-6  (interview turns)                            │
-│  claude-opus-4-7    (end-of-session review, extended thinking)   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

@@ -39,8 +39,7 @@ The root `.env` file is loaded by the backend at startup (one level up from `bac
 ```
 ANTHROPIC_API_KEY=...
 LLM_PROVIDER=anthropic
-LLM_MODEL=claude-sonnet-4-6       # used for interview replies
-REASONING_MODEL=claude-opus-4-7   # used for post-interview review
+LLM_MODEL=claude-sonnet-4-6
 DSN=postgres://...
 ```
 
@@ -60,8 +59,8 @@ Entry point: `cmd/main.go` — opens the DB, runs migrations, seeds problems, co
 **Packages:**
 
 - `internal/db` — DB open/migrate/seed. Migrations and seed data are embedded at compile time via `//go:embed`.
-- `internal/llm` — `Client` and `ReviewClient` interfaces, Anthropic implementation. Interview replies use `claude-sonnet-4-6`; end-of-session review uses `claude-opus-4-7` (extended thinking).
-- `internal/session` — `SessionStore` backed by Postgres. Owns all SQL. `Reply` inserts user message, fetches full history, calls `client.Send`, inserts assistant reply. `GenerateReview` fetches full session and calls `reviewClient.SendReview`.
+- `internal/llm` — `Client` interface with Anthropic implementation.
+- `internal/session` — `SessionStore` backed by Postgres. Owns all SQL. `Reply` inserts user message, fetches full history, calls `client.Send`, inserts assistant reply.
 - `internal/prompts` — `GetSystemPrompt(state, problemText, code)` builds the system prompt: fixed base + state-specific developer prompt + optional candidate code appended at the end.
 - `internal/api` — Gin handlers and router. Defines a `Store` interface (subset of `*session.SessionStore`) so handlers are testable without a real DB.
 
@@ -72,8 +71,6 @@ Entry point: `cmd/main.go` — opens the DB, runs migrations, seeds problems, co
 | POST | `/start` | `StartInterviewHandler` — picks random problem, creates session, returns hardcoded welcome message |
 | GET | `/sessions/:id` | `GetSessionHandler` — returns full session (state, problem_text, chat_history) |
 | POST | `/sessions/:id/reply` | `ReplyHandler` — runs one LLM turn, advances state machine |
-| POST | `/sessions/:id/review` | `ReviewHandler` — generates end-of-interview review |
-
 CORS is configured to allow `http://localhost:3000`.
 
 ### State machine
@@ -86,7 +83,7 @@ The LLM is instructed to return JSON `{"reply": "...", "current_state": "..."}` 
 
 Next.js with Pages Router. Two pages:
 - `pages/index.tsx` — landing page with a start button. `POST /start` → redirects to `/chat?sessionID=...&initialText=...`
-- `pages/chat.tsx` — split-pane interview UI. Left: `<textarea>` code editor (value sent with every reply). Right: `ChatWindow` + `ChatInput`. When `currentState === 'wrap_up'`, automatically `POST /sessions/:id/review` and shows `ReviewModal`.
+- `pages/chat.tsx` — split-pane interview UI. Left: `<textarea>` code editor (value sent with every reply). Right: `ChatWindow` + `ChatInput`.
 
 ### Database schema
 
@@ -115,10 +112,6 @@ Handler tests use `mockStore` (in `session_handlers_test.go`) with injectable fu
 **Initial message passed via URL query param.** After `POST /start`, the frontend passes the welcome message to `/chat` as `?initialText=...` rather than fetching it from `GET /sessions/:id`. This avoids an extra round-trip and keeps `problem_text` from ever reaching the client (it would be visible in the session response).
 
 **`statePrompts` map is built at package init time.** In `internal/prompts/system.go`, `var statePrompts = map[session.State]string{...}` uses `fmt.Sprintf` calls that reference `stateInstructions`. Go initialises package-level vars in declaration order within a file, so `stateInstructions` must be declared before `statePrompts` in that file — keep this order.
-
-**Review uses a separate LLM client (`ReviewClient`).** The review call (`GenerateReview`) uses `REASONING_MODEL` (claude-opus-4-7) rather than the interview model. Both are Anthropic clients but the interface is split (`Client`/`ReviewClient`) to allow different models or providers per use case.
-
-**`reviewFetchedRef` in `chat.tsx`** is a `useRef` (not state) that prevents the review from being fetched twice when `currentState` becomes `wrap_up`. Because the `useEffect` that watches `currentState` may fire during re-renders, using a ref instead of state avoids triggering another render cycle.
 
 ## Known fragilities
 
