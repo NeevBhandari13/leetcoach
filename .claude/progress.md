@@ -79,8 +79,9 @@
 - [ ] **LLM JSON retry / fallback** — if the LLM returns malformed JSON, `ReplyHandler` immediately returns 500. A retry or graceful error message to the user would make the app more robust.
 - [ ] **State validation in `SetState`** — any string the LLM returns as `current_state` is persisted verbatim. Add an allowlist check.
 - [ ] **Session expiry / cleanup** — sessions accumulate in the DB indefinitely; no TTL or delete mechanism
-- [ ] **Frontend ADRs** — user requested an `frontend/decisions/` folder with ADRs (was in progress when this file was created)
-- [ ] **Backend ADRs** — user requested a `backend/decisions/` folder with ADRs (was in progress when this file was created)
+- [x] **Frontend ADRs** — `frontend/decisions/` has ADRs 001–004 + index.md
+- [x] **Backend ADRs** — `backend/decisions/` has ADRs 001–003, 005 + index.md
+- [x] **Auto-ADR hook** — `scripts/update-adrs.sh` + `.git/hooks/post-commit` runs `claude -p` on every commit to create/update ADRs
 - [ ] **More seed problems** — currently only a small set of problems in `seed/problems.json`
 
 ### Low priority / nice to have
@@ -139,3 +140,4 @@
 |------|---------------|
 | 2026-06-16 | Initial full-stack build: DB + migrations + session store + LLM layer + API handlers + state machine + frontend + Makefile. E2E test passed. CLAUDE.md written. |
 | 2026-06-16 | `progress.md` created. ADRs requested by user (frontend/decisions + backend/decisions) — not yet written. Frontend UI redesign pending (user's message was cut off). |
+| 2026-06-16 | ADR index files created for frontend/decisions and backend/decisions. `scripts/update-adrs.sh` added — uses `claude -p` to analyze commit diffs and create/update ADRs after every commit. `.git/hooks/post-commit` installed. `make install-hooks` and `make update-adrs` added to Makefile. |
