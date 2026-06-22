@@ -1,24 +1,40 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "@/styles/chatTextField.module.css";
 
 interface ChatTextFieldProps {
     value: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // allows the parent component to keep track of the input value as it is typed, every time there is a change to it
-    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void; // handled by this component because it is listening for keyboard events
+    onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
     disabled: boolean;
 }
 
 const ChatTextField: React.FC<ChatTextFieldProps> = ({ value, onChange, onKeyDown, disabled }) => {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e);
+    if (ref.current) {
+      ref.current.style.height = 'auto';
+      ref.current.style.height = `${Math.min(ref.current.scrollHeight, 160)}px`;
+    }
+  };
+
+  useEffect(() => {
+    if (value === '' && ref.current) {
+      ref.current.style.height = 'auto';
+    }
+  }, [value]);
+
   return (
-    // <input/> is a jsx text input field
-    <input
-      type="text" // type of input
-      value={value} // sets the value of the input field to the value of the value prop
+    <textarea
+      ref={ref}
+      value={value}
       className={styles.inputField}
-      onChange={onChange} // sets the onChange event handler to the onChange prop
-      onKeyDown={onKeyDown} // tracks if the enter key is pressed
-      disabled={disabled} // sets the disabled attribute to the disabled prop
+      onChange={handleChange}
+      onKeyDown={onKeyDown}
+      disabled={disabled}
       placeholder="Type your message..."
+      rows={1}
     />
   );
 };

@@ -12,12 +12,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
     const [message, setMessage] = useState('');
 
     // the target is the  native HTMLInputElement rendered in the ChatTextField component (which is specified) and the value is the current input in it, setMessage is a function which updates the message state to the value in the input, we defined it above
-    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setMessage(e.target.value)
-    }
+    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setMessage(e.target.value);
+    };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' && message.trim() !== '') {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey && message.trim() !== '') {
+        e.preventDefault();
         handleSend();
       }
     };
