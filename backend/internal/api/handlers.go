@@ -118,6 +118,11 @@ func ReplyHandler(store Store) gin.HandlerFunc {
 			return
 		}
 
+		if err := store.UpdateChatHistory(c, sessionID, llm.Message{Role: "assistant", Content: llmRes.Reply}); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
 		c.JSON(http.StatusOK, replyResponse{Message: llmRes.Reply})
 	}
 }

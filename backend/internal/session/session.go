@@ -204,18 +204,5 @@ func (s *SessionStore) Reply(ctx context.Context, sessionID, system, userMessage
 		return "", err
 	}
 
-	reply, err := s.client.Send(ctx, system, messages)
-	if err != nil {
-		return "", err
-	}
-
-	_, err = s.db.ExecContext(ctx,
-		`INSERT INTO messages (session_id, role, content) VALUES ($1, $2, $3)`,
-		sessionID, "assistant", reply,
-	)
-	if err != nil {
-		return "", err
-	}
-
-	return reply, nil
+	return s.client.Send(ctx, system, messages)
 }
