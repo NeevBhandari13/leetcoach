@@ -18,12 +18,10 @@ export default function StartInterviewButton() {
 
             const data: StartInterviewResponse = await response.json();
 
+            sessionStorage.setItem('initialText', data.message);
             router.push({
                 pathname: '/chat',
-                query: {
-                    sessionID: data.session_id,
-                    initialText: data.message,
-                },
+                query: { sessionID: data.session_id },
             });
         } catch (error) {
             console.error('Error starting interview:', error);

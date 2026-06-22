@@ -9,7 +9,7 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
 const ChatPage = () => {
     const router = useRouter();
-    const { sessionID, initialText } = router.query;
+    const { sessionID } = router.query;
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [code, setCode] = useState('');
@@ -18,10 +18,12 @@ const ChatPage = () => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const initialText = sessionStorage.getItem('initialText');
         if (initialText) {
-            setMessages([{ role: 'assistant', content: String(initialText) }]);
+            setMessages([{ role: 'assistant', content: initialText }]);
+            sessionStorage.removeItem('initialText');
         }
-    }, [initialText]);
+    }, []);
 
     const handleSend = async (userMessage: string) => {
         setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
