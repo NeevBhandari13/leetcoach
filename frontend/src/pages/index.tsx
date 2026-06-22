@@ -1,16 +1,21 @@
-import StartInterviewButton from "@/components/startInterviewButton";
 import Header from '@/components/Header';
+import StartInterviewButton from "@/components/startInterviewButton";
+import styles from '@/styles/index.module.css';
 
-// exports this as the main function, home means this will be at the root of the website
 export default function Home() {
-
-    // return is what should actually be rendered on the page
-    return (
-         <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-            <Header />
-            <p>Welcome! Click the button below to start your interview.</p>
-            <StartInterviewButton />
-         </div>
-    )
-
+  return (
+    <div className={styles.page}>
+      <Header />
+      <div className={styles.hero}>
+        <span className={styles.cursor} aria-hidden="true" />
+        <h1 className={styles.headline}>
+          Think in code.<br />Interview under pressure.
+        </h1>
+        <p className={styles.subline}>
+          A live AI coach works through problems with you — asking the questions a real interviewer would ask.
+        </p>
+        <StartInterviewButton />
+      </div>
+    </div>
+  );
 }

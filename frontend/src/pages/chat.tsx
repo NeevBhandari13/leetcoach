@@ -79,11 +79,11 @@ const ChatPage = () => {
     }, [handleMouseMove, handleMouseUp]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg)' }}>
             <Header />
             <div
                 ref={containerRef}
-                style={{ display: 'flex', flex: 1, overflow: 'hidden', marginTop: '60px' }}
+                style={{ display: 'flex', flex: 1, overflow: 'hidden', marginTop: '56px' }}
             >
                 <div style={{ width: `${leftWidth}%`, display: 'flex', flexDirection: 'column', padding: '12px' }}>
                     <textarea
@@ -94,13 +94,16 @@ const ChatPage = () => {
                         style={{
                             flex: 1,
                             resize: 'none',
-                            fontFamily: 'monospace',
-                            fontSize: '14px',
-                            padding: '12px',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
+                            fontFamily: 'var(--font-geist-mono, monospace)',
+                            fontSize: '13px',
+                            lineHeight: '1.65',
+                            padding: '16px',
+                            border: '1px solid var(--border)',
+                            borderRadius: '4px',
                             outline: 'none',
-                            backgroundColor: '#fafafa',
+                            backgroundColor: 'var(--surface)',
+                            color: 'var(--text-primary)',
+                            caretColor: 'var(--accent)',
                         }}
                     />
                 </div>
@@ -108,14 +111,14 @@ const ChatPage = () => {
                 <div
                     onMouseDown={() => { isDragging.current = true; }}
                     style={{
-                        width: '5px',
+                        width: '4px',
                         cursor: 'col-resize',
-                        backgroundColor: '#e0e0e0',
+                        backgroundColor: 'var(--border)',
                         flexShrink: 0,
                         transition: 'background-color 0.15s',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#bdbdbd')}
-                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#e0e0e0')}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--border)')}
                 />
 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>

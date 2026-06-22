@@ -1,21 +1,24 @@
 .message {
-  max-width: 70%;
+  max-width: 72%;
   padding: 10px 14px;
-  border-radius: 12px;
-  margin-bottom: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
   word-wrap: break-word;
+  font-family: var(--font-inter, sans-serif);
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
-/* assistant message: aligned left, grey bg */
 .assistant {
   align-self: flex-start;
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: var(--surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
 }
 
-/* user message: aligned right, blue bg */
 .user {
   align-self: flex-end;
-  background-color: #007aff;
-  color: white;
+  background-color: var(--accent);
+  color: var(--bg);
+  font-weight: 500;
 }

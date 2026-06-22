@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { StartInterviewResponse } from '@/types/types';
+import styles from '@/styles/startInterviewButton.module.css';
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
@@ -31,7 +32,7 @@ export default function StartInterviewButton() {
     }
 
     return (
-        <button onClick={handleStartInterview} disabled={loading}>
+        <button className={styles.button} onClick={handleStartInterview} disabled={loading}>
             {loading ? 'Starting...' : 'Start Interview'}
         </button>
     );
