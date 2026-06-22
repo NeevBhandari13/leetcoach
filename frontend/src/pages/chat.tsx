@@ -18,12 +18,28 @@ const ChatPage = () => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (!sessionID) return;
+
         const initialText = sessionStorage.getItem('initialText');
         if (initialText) {
             setMessages([{ role: 'assistant', content: initialText }]);
             sessionStorage.removeItem('initialText');
+            return;
         }
-    }, []);
+
+        fetch(`${backendUrl}/sessions/${sessionID}`)
+            .then(res => res.json())
+            .then(data => {
+                const history: Message[] = (data.chat_history ?? []).map(
+                    (m: { Role: string; Content: string }) => ({
+                        role: m.Role as 'user' | 'assistant',
+                        content: m.Content,
+                    })
+                );
+                setMessages(history);
+            })
+            .catch(err => console.error('Error loading session:', err));
+    }, [sessionID]);
 
     const handleSend = async (userMessage: string) => {
         setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
