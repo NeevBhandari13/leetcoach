@@ -89,6 +89,20 @@ const ChatPage = () => {
                     <textarea
                         value={code}
                         onChange={e => setCode(e.target.value)}
+                        onKeyDown={e => {
+                            if (e.key === 'Tab') {
+                                e.preventDefault();
+                                const el = e.currentTarget;
+                                const start = el.selectionStart;
+                                const end = el.selectionEnd;
+                                const spaces = '  ';
+                                setCode(code.substring(0, start) + spaces + code.substring(end));
+                                requestAnimationFrame(() => {
+                                    el.selectionStart = start + spaces.length;
+                                    el.selectionEnd = start + spaces.length;
+                                });
+                            }
+                        }}
                         placeholder="Write your code here..."
                         spellCheck={false}
                         style={{
