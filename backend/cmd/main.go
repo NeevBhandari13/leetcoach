@@ -32,7 +32,11 @@ func main() {
 	client := NewLLMClient()
 	store := session.NewSessionStore(sqlDb, client)
 	router := api.NewRouter(store)
-	router.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	router.Run(":" + port)
 }
 
 func NewLLMClient() llm.Client {
