@@ -2,8 +2,6 @@ GCP_REGION     := australia-southeast2
 GCP_PROJECT    := leecoach-prod
 IMAGE          := $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT)/leetcoach/backend:latest
 CLOUD_SQL_INST := leecoach-prod:$(GCP_REGION):leetcoach-db
-DB_USER        := leetcoach_user
-DB_NAME        := leetcoach
 
 .PHONY: dev backend frontend test install-hooks update-adrs deploy
 
@@ -43,7 +41,7 @@ deploy:
 		--platform=managed \
 		--service-account=leetcoach-cloud-run-sa@$(GCP_PROJECT).iam.gserviceaccount.com \
 		--add-cloudsql-instances=$(CLOUD_SQL_INST) \
-		--set-env-vars="LLM_PROVIDER=anthropic,LLM_MODEL=claude-sonnet-4-6,ALLOWED_ORIGIN=https://leetcoach-drab.vercel.app,https://leetcoach.net,https://www.leetcoach.net,DB_USER=$(DB_USER),DB_NAME=$(DB_NAME),DB_INSTANCE=$(CLOUD_SQL_INST)" \
+		--env-vars-file=backend/cloudrun-env.yaml \
 		--set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest,DB_PASSWORD=DB_PASSWORD:latest" \
 		--allow-unauthenticated \
 		--project=$(GCP_PROJECT)

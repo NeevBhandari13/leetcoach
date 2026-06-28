@@ -1,0 +1,6 @@
+LLM_PROVIDER: anthropic
+LLM_MODEL: claude-sonnet-4-6
+ALLOWED_ORIGIN: "https://leetcoach-drab.vercel.app,https://leetcoach.net,https://www.leetcoach.net"
+DB_USER: leetcoach_user
+DB_NAME: leetcoach
+DB_INSTANCE: leecoach-prod:australia-southeast2:leetcoach-db
