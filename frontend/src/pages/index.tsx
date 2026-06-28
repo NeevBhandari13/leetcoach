@@ -12,7 +12,7 @@ export default function Home() {
           Think in code.<br />Interview under pressure.
         </h1>
         <p className={styles.subline}>
-          A live AI coach works through problems with you — asking the questions a real interviewer would ask.
+          A live AI coach works through problems with you — simulating a real technical interview.
         </p>
         <StartInterviewButton />
       </div>

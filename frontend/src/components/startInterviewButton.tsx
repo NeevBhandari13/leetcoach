@@ -33,7 +33,7 @@ export default function StartInterviewButton() {
 
     return (
         <button className={styles.button} onClick={handleStartInterview} disabled={loading}>
-            {loading ? 'Starting...' : 'Start Interview'}
+            {loading ? 'Starting...' : 'Start Random Interview'}
         </button>
     );
 }
