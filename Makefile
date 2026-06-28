@@ -43,7 +43,7 @@ deploy:
 		--platform=managed \
 		--service-account=leetcoach-cloud-run-sa@$(GCP_PROJECT).iam.gserviceaccount.com \
 		--add-cloudsql-instances=$(CLOUD_SQL_INST) \
-		--set-env-vars="LLM_PROVIDER=anthropic,LLM_MODEL=claude-sonnet-4-6,ALLOWED_ORIGIN=https://leetcoach-drab.vercel.app,DB_USER=$(DB_USER),DB_NAME=$(DB_NAME),DB_INSTANCE=$(CLOUD_SQL_INST)" \
+		--set-env-vars="LLM_PROVIDER=anthropic,LLM_MODEL=claude-sonnet-4-6,ALLOWED_ORIGIN=https://leetcoach-drab.vercel.app,https://leetcoach.net,https://www.leetcoach.net,DB_USER=$(DB_USER),DB_NAME=$(DB_NAME),DB_INSTANCE=$(CLOUD_SQL_INST)" \
 		--set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest,DB_PASSWORD=DB_PASSWORD:latest" \
 		--allow-unauthenticated \
 		--project=$(GCP_PROJECT)
