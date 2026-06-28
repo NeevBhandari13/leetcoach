@@ -1,6 +1,8 @@
 package api
 
 import (
+	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -8,10 +10,15 @@ import (
 )
 
 func NewRouter(store Store) *gin.Engine {
+	origins := []string{"http://localhost:3000"}
+	if o := os.Getenv("ALLOWED_ORIGIN"); o != "" {
+		origins = append(origins, strings.Split(o, ",")...)
+	}
+
 	router := gin.Default()
 	router.HandleMethodNotAllowed = true
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     origins,
 		AllowMethods:     []string{"GET", "POST"},
 		AllowHeaders:     []string{"Content-Type"},
 		MaxAge:           12 * time.Hour,

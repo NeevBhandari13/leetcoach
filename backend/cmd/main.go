@@ -16,7 +16,7 @@ func main() {
 	if err := godotenv.Load("../.env"); err != nil {
 		fmt.Println("godotenv error:", err)
 	}
-	sqlDb, err := db.Open(os.Getenv("DSN"))
+	sqlDb, err := db.Open(dsn())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "db error: %v\n", err)
 		os.Exit(1)
@@ -37,6 +37,18 @@ func main() {
 		port = "8080"
 	}
 	router.Run(":" + port)
+}
+
+func dsn() string {
+	if d := os.Getenv("DSN"); d != "" {
+		return d
+	}
+	return fmt.Sprintf("postgres://%s:%s@/%s?host=/cloudsql/%s",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_INSTANCE"),
+	)
 }
 
 func NewLLMClient() llm.Client {
